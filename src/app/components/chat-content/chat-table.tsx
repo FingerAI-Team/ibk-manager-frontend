@@ -5,9 +5,13 @@ import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } fro
 import { fetchChatList } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
 import type { ChatData } from '@/app/api/chat'
+import { exportChatContentToExcel } from '@/utils/excel'
 
 export const ChatTable = forwardRef<
-  { loadChatData: (filters: SearchFilters) => void },
+  { 
+    loadChatData: (filters: SearchFilters) => void;
+    exportToExcel: () => void;
+  },
   Record<string, never>
 >((props, ref) => {
   const [loading, setLoading] = useState(false);
@@ -36,11 +40,18 @@ export const ChatTable = forwardRef<
     }
   }, [rowsPerPage]);
 
+  const exportToExcel = useCallback(() => {
+    if (chatData.length > 0 && currentFilters) {
+      exportChatContentToExcel(chatData, currentFilters);
+    }
+  }, [chatData, currentFilters]);
+
   useImperativeHandle(ref, () => ({
     loadChatData: (filters: SearchFilters) => {
       setPage(0); // 새로운 검색시 첫 페이지로
       loadChatData(filters, 0);
-    }
+    },
+    exportToExcel
   }));
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -87,6 +98,7 @@ export const ChatTable = forwardRef<
               <TableCell>날짜</TableCell>
               <TableCell>사용자 ID</TableCell>
               <TableCell>질문 내용</TableCell>
+              <TableCell>답변 내용</TableCell>
               <TableCell>종목 여부</TableCell>
             </TableRow>
           </TableHead>
@@ -97,6 +109,7 @@ export const ChatTable = forwardRef<
                   <TableCell>{row.timestamp}</TableCell>
                   <TableCell>{row.userId}</TableCell>
                   <TableCell>{row.question}</TableCell>
+                  <TableCell>{row.answer || '답변 내용 없음'}</TableCell>
                   <TableCell>
                     <div className={`stock-badge stock-badge-${row.isStock}`}>
                       {row.isStock ? (
@@ -116,7 +129,7 @@ export const ChatTable = forwardRef<
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={5} align="center">
                   검색 결과가 없습니다.
                 </TableCell>
               </TableRow>

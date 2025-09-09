@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, Select, MenuItem, TextField, Button } from "@mui/material"
+import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Avatar } from "@mui/material"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -8,6 +8,7 @@ import type { Dayjs } from 'dayjs';
 
 interface SearchFiltersProps {
   onSearch: (filters: SearchFilters) => void;
+  onExcelDownload: () => void;
 }
 
 export interface SearchFilters {
@@ -18,7 +19,7 @@ export interface SearchFilters {
   keyword: string;
 }
 
-export function SearchFilters({ onSearch }: SearchFiltersProps) {
+export function SearchFilters({ onSearch, onExcelDownload }: SearchFiltersProps) {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [isStock, setIsStock] = useState('all');
@@ -89,6 +90,33 @@ export function SearchFilters({ onSearch }: SearchFiltersProps) {
         onClick={handleSearch}
       >
         검색
+      </Button>
+
+      <Button
+        variant="outlined"
+        onClick={onExcelDownload}
+        sx={{ 
+          minWidth: '45px',
+          height: '45px',
+          padding: '8px',
+          borderRadius: '6px',
+          borderColor: '#d0d0d0',
+          '&:hover': {
+            borderColor: '#a0a0a0',
+            backgroundColor: '#f8f8f8'
+          }
+        }}
+        title="엑셀 다운로드"
+      >
+        <Avatar
+          src="/excel.png"
+          alt="Excel"
+          sx={{ 
+            width: 28, 
+            height: 28,
+            backgroundColor: 'transparent'
+          }}
+        />
       </Button>
     </div>
   )

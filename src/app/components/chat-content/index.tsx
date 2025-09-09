@@ -6,10 +6,17 @@ import type { SearchFilters as SearchFiltersType } from './search-filters'
 import './styles.css'
 
 export function ChatContent() {
-  const tableRef = useRef<{ loadChatData: (filters: SearchFiltersType) => void }>(null);
+  const tableRef = useRef<{ 
+    loadChatData: (filters: SearchFiltersType) => void;
+    exportToExcel: () => void;
+  }>(null);
 
   const handleSearch = (filters: SearchFiltersType) => {
     tableRef.current?.loadChatData(filters);
+  };
+
+  const handleExcelDownload = () => {
+    tableRef.current?.exportToExcel();
   };
 
   return (
@@ -18,7 +25,7 @@ export function ChatContent() {
         <CardContent>
           <div className="chat-content-header">
             <Typography variant="h6" className="content-title">대화 내용 조회</Typography>
-            <SearchFilters onSearch={handleSearch} />
+            <SearchFilters onSearch={handleSearch} onExcelDownload={handleExcelDownload} />
           </div>
           <ChatTable ref={tableRef} />
         </CardContent>

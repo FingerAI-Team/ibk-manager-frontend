@@ -1,19 +1,22 @@
 'use client';
 
-import { Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material"
+import { Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem, Button, Avatar } from "@mui/material"
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Download } from '@mui/icons-material';
 import dayjs, { Dayjs } from 'dayjs';
 import { useState, useEffect } from 'react';
 import { getHourlyChartData } from '@/app/api/chat-analytics';
 import type { HourlyChartData } from '@/app/api/chat-analytics/types';
+import { exportHourlyChartToExcel } from '@/utils/excel';
 
 export function HourlyChart() {
   const [dateType, setDateType] = useState('today');
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [media, setMedia] = useState<string>('all');
   const [chartData, setChartData] = useState<HourlyChartData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [apiSuccess, setApiSuccess] = useState(true);
@@ -33,7 +36,8 @@ export function HourlyChart() {
       const response = await getHourlyChartData(
         dateType,
         startDate?.format('YYYY-MM-DD'),
-        endDate?.format('YYYY-MM-DD')
+        endDate?.format('YYYY-MM-DD'),
+        media === 'all' ? undefined : media
       );
       
       setApiSuccess(response.success);
@@ -53,13 +57,25 @@ export function HourlyChart() {
 
   useEffect(() => {
     fetchData();
-  }, [dateType, startDate, endDate]);
+  }, [dateType, startDate, endDate, media]);
 
   const handleDateTypeChange = (value: string) => {
     setDateType(value);
     if (value !== 'custom') {
       setStartDate(null);
       setEndDate(null);
+    }
+  };
+
+  const handleExcelDownload = () => {
+    if (chartData.length > 0) {
+      exportHourlyChartToExcel(
+        chartData,
+        dateType,
+        startDate?.format('YYYY-MM-DD'),
+        endDate?.format('YYYY-MM-DD'),
+        media === 'all' ? undefined : media
+      );
     }
   };
 
@@ -101,6 +117,45 @@ export function HourlyChart() {
                 <MenuItem value="custom">기간 지정</MenuItem>
               </Select>
             </FormControl>
+            <FormControl className="form-control">
+              <InputLabel>매체 구분</InputLabel>
+              <Select 
+                label="매체 구분" 
+                value={media}
+                onChange={(e) => setMedia(e.target.value)}
+              >
+                <MenuItem value="all">전체</MenuItem>
+                <MenuItem value="MTS">MTS</MenuItem>
+                <MenuItem value="i-One Bank">i-One Bank</MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              onClick={handleExcelDownload}
+              disabled={chartData.length === 0}
+              sx={{ 
+                minWidth: '45px',
+                height: '45px',
+                padding: '8px',
+                borderRadius: '6px',
+                borderColor: '#d0d0d0',
+                '&:hover': {
+                  borderColor: '#a0a0a0',
+                  backgroundColor: '#f8f8f8'
+                }
+              }}
+              title="엑셀 다운로드"
+            >
+              <Avatar
+                src="/excel.png"
+                alt="Excel"
+                sx={{ 
+                  width: 28, 
+                  height: 28,
+                  backgroundColor: 'transparent'
+                }}
+              />
+            </Button>
           </div>
         </div>
         <div className="chart-container">

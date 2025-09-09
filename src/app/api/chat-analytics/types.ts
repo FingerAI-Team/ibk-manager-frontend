@@ -10,6 +10,7 @@ export interface DailyChartData {
   date: string;
   chats: number;
   users: number;
+  media?: string; // 매체 구분 (MTS, i-One Bank)
 }
 
 export interface DailyChartResponse {
@@ -20,6 +21,7 @@ export interface DailyChartResponse {
 export interface HourlyChartData {
   hour: string;
   chats: number;
+  media?: string; // 매체 구분 (MTS, i-One Bank)
 }
 
 export interface HourlyChartResponse {
@@ -31,6 +33,7 @@ export interface WeekdayChartData {
   day: string;
   chats: number;
   users: number;
+  media?: string; // 매체 구분 (MTS, i-One Bank)
 }
 
 export interface WeekdayChartResponse {
@@ -42,6 +45,7 @@ export interface UserRankingData {
   userId: string;
   userName: string;
   chats: number;
+  media?: string; // 매체 구분 (MTS, i-One Bank)
 }
 
 export interface UserRankingResponse {

@@ -1,10 +1,12 @@
 'use client';
 
-import { Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem } from "@mui/material"
+import { Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem, Button, Avatar } from "@mui/material"
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { Download } from '@mui/icons-material';
 import { useState, useEffect } from 'react'
 import { getWeekdayChartData } from '@/app/api/chat-analytics';
 import type { WeekdayChartData } from '@/app/api/chat-analytics/types';
+import { exportWeekdayChartToExcel } from '@/utils/excel';
 
 const COLORS = {
   chats: 'var(--ibk-blue)',
@@ -15,6 +17,7 @@ export function WeekdayChart() {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear);
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [media, setMedia] = useState<string>('all');
   const [chartData, setChartData] = useState<WeekdayChartData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +27,7 @@ export function WeekdayChart() {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await getWeekdayChartData(selectedYear, selectedMonth);
+      const response = await getWeekdayChartData(selectedYear, selectedMonth, media === 'all' ? undefined : media);
       if (response.success) {
         setChartData(response.data.data);
       }
@@ -35,9 +38,15 @@ export function WeekdayChart() {
     }
   };
 
+  const handleExcelDownload = () => {
+    if (chartData.length > 0) {
+      exportWeekdayChartToExcel(chartData, selectedYear, selectedMonth, media === 'all' ? undefined : media);
+    }
+  };
+
   useEffect(() => {
     fetchData();
-  }, [selectedYear, selectedMonth]);
+  }, [selectedYear, selectedMonth, media]);
 
   return (
     <Card>
@@ -69,6 +78,45 @@ export function WeekdayChart() {
                 ))}
               </Select>
             </FormControl>
+            <FormControl className="form-control">
+              <InputLabel>매체 구분</InputLabel>
+              <Select 
+                label="매체 구분" 
+                value={media}
+                onChange={(e) => setMedia(e.target.value)}
+              >
+                <MenuItem value="all">전체</MenuItem>
+                <MenuItem value="MTS">MTS</MenuItem>
+                <MenuItem value="i-One Bank">i-One Bank</MenuItem>
+              </Select>
+            </FormControl>
+            <Button
+              variant="outlined"
+              onClick={handleExcelDownload}
+              disabled={chartData.length === 0}
+              sx={{ 
+                minWidth: '45px',
+                height: '45px',
+                padding: '8px',
+                borderRadius: '6px',
+                borderColor: '#d0d0d0',
+                '&:hover': {
+                  borderColor: '#a0a0a0',
+                  backgroundColor: '#f8f8f8'
+                }
+              }}
+              title="엑셀 다운로드"
+            >
+              <Avatar
+                src="/excel.png"
+                alt="Excel"
+                sx={{ 
+                  width: 28, 
+                  height: 28,
+                  backgroundColor: 'transparent'
+                }}
+              />
+            </Button>
           </div>
         </div>
         <div className="chart-container">

@@ -5,6 +5,7 @@ export interface ChatData {
   timestamp: string;
   userId: string;
   question: string;
+  answer: string; // 답변 내용 추가
   isStock: boolean;
 }
 
