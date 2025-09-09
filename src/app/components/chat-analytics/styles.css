@@ -1,0 +1,89 @@
+:root {
+  /* 색상 변수 */
+  --ibk-blue: #0051A4;
+  --success-green: #82ca9d;
+  --chart-text: #888888;
+  
+  /* 여백 변수 */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  
+  /* 차트 관련 변수 */
+  --chart-height: 300px;
+  --chart-height-large: 400px;
+  --chart-font-size: 12px;
+}
+
+/* 레이아웃 */
+.analytics-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+/* 차트 헤더 영역 */
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.chart-controls {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+}
+
+.date-picker-group {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+/* MUI 컴포넌트 스타일 오버라이드 */
+.form-control {
+  min-width: 120px;
+}
+
+/* 차트 컨테이너 */
+.chart-container {
+  width: 100%;
+  height: var(--chart-height);
+}
+
+.chart-container-large {
+  height: var(--chart-height-large);
+}
+
+/* 차트 공통 스타일 */
+.chart text {
+  font-size: var(--chart-font-size);
+  fill: var(--chart-text);
+}
+
+.chart-tooltip {
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 4px;
+}
+
+/* 로딩 및 빈 데이터 상태 */
+.loading-container,
+.empty-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--chart-text);
+}
+
+/* 차트 알림 메시지 */
+.chart-notice {
+  text-align: center;
+  margin-top: var(--spacing-sm);
+  color: var(--chart-text);
+} 

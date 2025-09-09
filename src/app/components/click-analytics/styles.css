@@ -1,0 +1,171 @@
+:root {
+  /* 색상 변수 */
+  --ibk-blue: #0051A4;
+  --success-green: #82ca9d;
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --error-red: #D32F2F;
+  
+  /* 여백 변수 */
+  --spacing-xs: 0.25rem;  /* 4px */
+  --spacing-sm: 0.5rem;   /* 8px */
+  --spacing-md: 1rem;     /* 16px */
+  --spacing-lg: 1.5rem;   /* 24px */
+  
+  /* 크기 변수 */
+  --datepicker-width: 200px;
+  --chart-height: 400px;
+  --pie-chart-height: 300px;
+  --pie-inner-radius: 60px;
+  --pie-outer-radius: 80px;
+}
+
+/* 레이아웃 */
+.click-analytics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* 차트 컨테이너 */
+.chart-container {
+  height: var(--chart-height);
+  width: 100%;
+  margin: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) var(--spacing-lg);
+}
+
+/* 날짜 선택기 영역 */
+.date-selector-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.date-picker-group {
+  display: flex;
+  gap: 1rem;
+}
+
+/* 범례 영역 */
+.legend-area {
+  text-align: center;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+.legend-item {
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.legend-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.legend-item.active {
+  background-color: rgba(0, 0, 0, 0.08);
+  font-weight: bold;
+}
+
+.legend-item-clicks.active {
+  color: var(--ibk-blue);
+}
+
+.legend-item-chats.active {
+  color: var(--success-green);
+}
+
+/* 비율 차트 영역 */
+.ratio-charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-height: 500px;
+}
+
+.ratio-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  position: relative;
+  min-height: 400px;
+}
+
+/* 로딩/빈 데이터 컨테이너 스타일 수정 */
+.ratio-charts-grid .loading-container,
+.ratio-charts-grid .empty-container {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+  grid-column: 1 / -1; /* 그리드 전체 너비 사용 */
+}
+
+.ratio-chart-container {
+  height: var(--pie-chart-height);
+}
+
+.ratio-legend {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+.ratio-legend-item {
+  display: flex;
+  align-items: center;
+}
+
+.ratio-legend-color {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-right: 0.25rem;
+}
+
+/* 파이 차트 스타일 */
+.pie-chart {
+  font-size: var(--spacing-sm);
+}
+
+.pie-chart text {
+  fill: #666;
+  font-size: 0.75rem;
+}
+
+.pie-chart .recharts-sector:hover {
+  opacity: 0.8;
+}
+
+.pie-tooltip {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* MUI 컴포넌트 스타일 오버라이드 */
+.MuiDatePicker-root {
+  min-width: var(--datepicker-width);
+}
+
+.MuiTypography-root.text-secondary {
+  color: var(--text-secondary);
+}
+
+/* 예측 결과 색상 */
+.prediction-success {
+  color: var(--success-green);
+}
+
+.prediction-error {
+  color: var(--error-red);
+} 

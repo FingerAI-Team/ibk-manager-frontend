@@ -1,0 +1,112 @@
+/* 레이아웃 */
+.chat-content-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  width: 100%;
+  min-width: 0; /* 반응형을 위한 설정 */
+  height: 100vh;  /* 전체 높이 설정 */
+  overflow-y: auto;  /* 세로 스크롤 추가 */
+  padding: var(--spacing-lg);  /* 여백 추가 */
+}
+
+.chat-content-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* 검색 필터 영역 */
+.search-filters {
+  display: flex;
+  flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 */
+  gap: var(--spacing-md);
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-md);
+}
+
+/* 입력 필드 크기 통일 */
+.search-form-control {
+  min-width: 200px !important;  /* Select 컴포넌트 너비 */
+}
+
+.search-user-input {
+  min-width: 200px !important;  /* 사용자 ID 입력창 너비 */
+}
+
+/* DatePicker 스타일 오버라이드 */
+.search-filters .MuiTextField-root {
+  min-width: 200px !important;  /* DatePicker 너비 */
+}
+
+.search-button {
+  height: 40px;
+  padding: 0 var(--spacing-md);
+  min-width: 80px;  /* 버튼 최소 너비 설정 */
+  font-size: 0.875rem;  /* 버튼 텍스트 크기 조정 */
+}
+
+/* 테이블 스타일 */
+.chat-table-container {
+  width: 100%;
+  overflow-x: auto;  /* 가로 스크롤만 유지 */
+}
+
+.chat-table-container table {
+  min-width: 800px;
+}
+
+.stock-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.stock-badge-true {
+  color: var(--ibk-blue);
+}
+
+.stock-badge-false {
+  color: var(--text-secondary);
+}
+
+/* CSS 변수 */
+:root {
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --border-color: rgba(0, 0, 0, 0.12);
+  --ibk-blue: #0051A4;
+  --text-secondary: rgba(0, 0, 0, 0.6);
+}
+
+.title-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.content-title {
+  font-size: 1.125rem !important;
+  font-weight: 500 !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+.table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--spacing-md);
+  background: white;
+  border-top: 1px solid var(--border-color);
+}
+
+.required-notice {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+} 
