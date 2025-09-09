@@ -79,3 +79,27 @@ export const exportUserRankingToExcel = (data: any[], period: string, displayCou
   
   downloadExcel(excelData, filename, '사용자 랭킹');
 };
+
+// 대화 내용 데이터를 엑셀로 변환
+export const exportChatContentToExcel = (data: any[], filters: any) => {
+  const excelData = data.map((item) => ({
+    '일시': item.timestamp,
+    '사용자 ID': item.userId,
+    '질문 내용': item.question,
+    '답변 내용': item.answer || '답변 내용 없음',
+    '종목 여부': item.isStock ? '종목' : '일반'
+  }));
+  
+  let filename = '대화내용_분석';
+  if (filters.startDate && filters.endDate) {
+    filename += `_${filters.startDate}_${filters.endDate}`;
+  }
+  if (filters.userId) {
+    filename += `_${filters.userId}`;
+  }
+  if (filters.isStock && filters.isStock !== 'all') {
+    filename += `_${filters.isStock === 'stock' ? '종목' : '일반'}`;
+  }
+  
+  downloadExcel(excelData, filename, '대화 내용 분석');
+};

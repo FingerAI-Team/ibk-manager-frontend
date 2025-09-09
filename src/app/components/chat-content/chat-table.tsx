@@ -98,7 +98,6 @@ export const ChatTable = forwardRef<
               <TableCell>날짜</TableCell>
               <TableCell>사용자 ID</TableCell>
               <TableCell>질문 내용</TableCell>
-              <TableCell>답변 내용</TableCell>
               <TableCell>종목 여부</TableCell>
             </TableRow>
           </TableHead>
@@ -109,7 +108,6 @@ export const ChatTable = forwardRef<
                   <TableCell>{row.timestamp}</TableCell>
                   <TableCell>{row.userId}</TableCell>
                   <TableCell>{row.question}</TableCell>
-                  <TableCell>{row.answer || '답변 내용 없음'}</TableCell>
                   <TableCell>
                     <div className={`stock-badge stock-badge-${row.isStock}`}>
                       {row.isStock ? (
@@ -129,7 +127,7 @@ export const ChatTable = forwardRef<
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell colSpan={4} align="center">
                   검색 결과가 없습니다.
                 </TableCell>
               </TableRow>

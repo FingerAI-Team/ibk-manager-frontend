@@ -1,7 +1,7 @@
 import { SearchFilters } from '../components/chat-content/search-filters';
 
 export interface ChatData {
-  id: number;
+  id: string; // 백엔드에서 string으로 반환됨
   timestamp: string;
   userId: string;
   question: string;
@@ -14,7 +14,7 @@ interface ChatResponse {
   total: number;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://ibkai.fingerservice.co.kr/api';  // API 서버 주소 추가
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api';  // 로컬 백엔드 서버로 변경
 export async function fetchChatList(
   filters: SearchFilters, 
   page: number = 0, 
