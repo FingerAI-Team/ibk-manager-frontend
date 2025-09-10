@@ -46,4 +46,49 @@ export async function fetchChatList(
   const data = await response.json();
   console.log('✅ API Response data:', data);
   return data;
+}
+
+// 전체 데이터를 조회하는 함수 (엑셀 다운로드용)
+export async function fetchAllChatData(filters: SearchFilters, totalCount: number): Promise<ChatData[]> {
+  console.log(`🔄 전체 데이터 조회 시작... (총 ${totalCount}개 예상)`);
+  
+  const allData: ChatData[] = [];
+  let page = 0;
+  const pageSize = 100; // 백엔드 제한: 최대 100개
+  const maxPages = Math.min(Math.ceil(totalCount / pageSize), 100); // 최대 100페이지 (10,000개)
+  
+  if (totalCount > 10000) {
+    console.warn(`⚠️ 데이터가 10,000개를 초과합니다. 최대 10,000개까지만 다운로드됩니다.`);
+  }
+  
+  for (let i = 0; i < maxPages; i++) {
+    try {
+      console.log(`📄 페이지 ${page + 1}/${maxPages} 조회 중...`);
+      
+      const response = await fetchChatList(filters, page, pageSize);
+      
+      if (response.items.length === 0) {
+        console.log('📄 더 이상 데이터가 없습니다.');
+        break;
+      }
+      
+      allData.push(...response.items);
+      console.log(`✅ 페이지 ${page + 1}: ${response.items.length}개 데이터 추가 (총 ${allData.length}개)`);
+      
+      // 마지막 페이지인지 확인
+      if (response.items.length < pageSize || allData.length >= totalCount) {
+        console.log('📄 마지막 페이지에 도달했습니다.');
+        break;
+      }
+      
+      page++;
+      
+    } catch (error) {
+      console.error(`❌ 페이지 ${page + 1} 조회 실패:`, error);
+      throw error;
+    }
+  }
+  
+  console.log(`🎉 전체 데이터 조회 완료: ${allData.length}개`);
+  return allData;
 } 

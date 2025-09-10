@@ -2,7 +2,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
-import { fetchChatList } from '@/app/api/chat'
+import { fetchChatList, fetchAllChatData } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
 import type { ChatData } from '@/app/api/chat'
 import { exportChatContentToExcel } from '@/utils/excel'
@@ -11,6 +11,7 @@ export const ChatTable = forwardRef<
   { 
     loadChatData: (filters: SearchFilters) => void;
     exportToExcel: () => void;
+    isExporting: boolean;
   },
   Record<string, never>
 >((props, ref) => {
@@ -21,6 +22,7 @@ export const ChatTable = forwardRef<
   const [total, setTotal] = useState(0);
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0) => {
     try {
@@ -40,18 +42,44 @@ export const ChatTable = forwardRef<
     }
   }, [rowsPerPage]);
 
-  const exportToExcel = useCallback(() => {
-    if (chatData.length > 0 && currentFilters) {
-      exportChatContentToExcel(chatData, currentFilters);
+  const exportToExcel = useCallback(async () => {
+    if (!currentFilters) {
+      alert('먼저 검색 조건을 설정하고 검색을 실행해주세요.');
+      return;
     }
-  }, [chatData, currentFilters]);
+
+    try {
+      setIsExporting(true);
+      console.log('전체 데이터 다운로드 시작...');
+      
+      // 전체 데이터 조회
+      const allData = await fetchAllChatData(currentFilters, total);
+      console.log(`전체 데이터 ${allData.length}건 조회 완료`);
+      
+      if (allData.length === 0) {
+        alert('다운로드할 데이터가 없습니다.');
+        return;
+      }
+      
+      // 엑셀 다운로드
+      exportChatContentToExcel(allData, currentFilters);
+      alert(`✅ 전체 ${allData.length}건의 데이터가 다운로드되었습니다!`);
+      
+    } catch (error) {
+      console.error('전체 데이터 다운로드 실패:', error);
+      alert('❌ 데이터 다운로드에 실패했습니다. 네트워크 연결을 확인하고 다시 시도해주세요.');
+    } finally {
+      setIsExporting(false);
+    }
+  }, [currentFilters]);
 
   useImperativeHandle(ref, () => ({
     loadChatData: (filters: SearchFilters) => {
       setPage(0); // 새로운 검색시 첫 페이지로
       loadChatData(filters, 0);
     },
-    exportToExcel
+    exportToExcel,
+    isExporting
   }));
 
   const handleChangePage = (event: unknown, newPage: number) => {

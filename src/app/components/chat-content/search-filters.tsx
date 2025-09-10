@@ -1,4 +1,4 @@
-import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Avatar } from "@mui/material"
+import { FormControl, InputLabel, Select, MenuItem, TextField, Button, Avatar, CircularProgress } from "@mui/material"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -9,6 +9,7 @@ import type { Dayjs } from 'dayjs';
 interface SearchFiltersProps {
   onSearch: (filters: SearchFilters) => void;
   onExcelDownload: () => void;
+  isExporting?: boolean;
 }
 
 export interface SearchFilters {
@@ -19,7 +20,7 @@ export interface SearchFilters {
   keyword: string;
 }
 
-export function SearchFilters({ onSearch, onExcelDownload }: SearchFiltersProps) {
+export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }: SearchFiltersProps) {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [isStock, setIsStock] = useState('all');
@@ -95,6 +96,7 @@ export function SearchFilters({ onSearch, onExcelDownload }: SearchFiltersProps)
       <Button
         variant="outlined"
         onClick={onExcelDownload}
+        disabled={isExporting}
         sx={{ 
           minWidth: '45px',
           height: '45px',
@@ -104,19 +106,27 @@ export function SearchFilters({ onSearch, onExcelDownload }: SearchFiltersProps)
           '&:hover': {
             borderColor: '#a0a0a0',
             backgroundColor: '#f8f8f8'
+          },
+          '&:disabled': {
+            borderColor: '#e0e0e0',
+            backgroundColor: '#f5f5f5'
           }
         }}
-        title="엑셀 다운로드"
+        title={isExporting ? "다운로드 중..." : "전체 데이터 엑셀 다운로드"}
       >
-        <Avatar
-          src="/excel.png"
-          alt="Excel"
-          sx={{ 
-            width: 28, 
-            height: 28,
-            backgroundColor: 'transparent'
-          }}
-        />
+        {isExporting ? (
+          <CircularProgress size={20} />
+        ) : (
+          <Avatar
+            src="/excel.png"
+            alt="Excel"
+            sx={{ 
+              width: 28, 
+              height: 28,
+              backgroundColor: 'transparent'
+            }}
+          />
+        )}
       </Button>
     </div>
   )
