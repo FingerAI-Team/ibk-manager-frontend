@@ -23,7 +23,6 @@ export const ChatTable = forwardRef<
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
-
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0) => {
     try {
       setLoading(true);
