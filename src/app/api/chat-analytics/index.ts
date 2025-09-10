@@ -1,7 +1,7 @@
 import { ApiResponse, DailyChartResponse, HourlyChartResponse, WeekdayChartResponse, UserRankingResponse } from './types';
 import { fetchWithAuth } from '@/utils/fetch';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api';  // API 서버 주소 추가
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://ibkai.fingerservice.co.kr/api';  // 원래 서버 주소로 복원
 const BASE_URL = API_BASE_URL+'/chat-analytics';
 
 // 일별 차트 데이터 조회

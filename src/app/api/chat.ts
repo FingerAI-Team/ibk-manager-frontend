@@ -14,7 +14,7 @@ interface ChatResponse {
   total: number;
 }
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api';  // 로컬 백엔드 서버로 변경
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://ibkai.fingerservice.co.kr/api';  // 원래 서버 주소로 복원
 export async function fetchChatList(
   filters: SearchFilters, 
   page: number = 0, 

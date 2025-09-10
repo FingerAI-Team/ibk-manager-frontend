@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { DailyStatsParams, DailyStatsResponse, DailyStats } from './types';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3005/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://ibkai.fingerservice.co.kr/api';
 
 export const homeApi = {
   // 일일 통계 데이터 조회
