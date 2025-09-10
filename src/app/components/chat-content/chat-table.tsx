@@ -43,8 +43,15 @@ export const ChatTable = forwardRef<
   }, [rowsPerPage]);
 
   const exportToExcel = useCallback(async () => {
+    console.log('🔍 디버깅 정보:', { currentFilters, total, chatData: chatData.length });
+    
     if (!currentFilters) {
       alert('먼저 검색 조건을 설정하고 검색을 실행해주세요.');
+      return;
+    }
+
+    if (total === 0) {
+      alert('조회된 데이터가 없습니다. 검색 조건을 확인해주세요.');
       return;
     }
 
@@ -71,7 +78,7 @@ export const ChatTable = forwardRef<
     } finally {
       setIsExporting(false);
     }
-  }, [currentFilters]);
+  }, [currentFilters, total, chatData]);
 
   useImperativeHandle(ref, () => ({
     loadChatData: (filters: SearchFilters) => {
