@@ -23,23 +23,27 @@ export async function fetchChatList(
   const queryParams = new URLSearchParams({
     page: page.toString(),
     pageSize: pageSize.toString(),
-    startDate: filters.startDate || '',  // 필수 파라미터
-    endDate: filters.endDate || '',      // 필수 파라미터
+    startDate: filters.startDate || '',  // 필수 필드 - 빈 값이라도 전달
+    endDate: filters.endDate || '',      // 필수 필드 - 빈 값이라도 전달
     ...(filters.isStock !== 'all' && { isStock: filters.isStock }),
     ...(filters.userId && { userId: filters.userId }),
     ...(filters.keyword && { keyword: filters.keyword })
   });
 
-  // 빈 값 제거
-  Array.from(queryParams.entries()).forEach(([key, value]) => {
-    if (!value) queryParams.delete(key);
-  });
-
-  const response = await fetch(`${API_BASE_URL}/chats?${queryParams}`);
+  const fullUrl = `${API_BASE_URL}/chats?${queryParams}`;
+  console.log('🔗 API URL:', fullUrl);
+  
+  const response = await fetch(fullUrl);
+  
+  console.log('📡 Response status:', response.status, response.statusText);
   
   if (!response.ok) {
-    throw new Error('Failed to fetch chat list');
+    const errorText = await response.text();
+    console.error('❌ API Error:', errorText);
+    throw new Error(`Failed to fetch chat list: ${response.status} ${response.statusText}`);
   }
 
-  return response.json();
+  const data = await response.json();
+  console.log('✅ API Response data:', data);
+  return data;
 } 

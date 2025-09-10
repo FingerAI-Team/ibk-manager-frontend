@@ -8,6 +8,7 @@ import { HomeStats } from "@/app/components/home-stats"
 import { ChatAnalytics } from "@/app/components/chat-analytics"
 import { ClickAnalytics } from "@/app/components/click-analytics"
 import { ChatContent } from "@/app/components/chat-content"
+import { ChatDetailTab } from "@/app/components/chat-detail"
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
           <Tab>📊 대화 활동 분석</Tab>
           <Tab>🎯 클릭 활동 분석</Tab>
           <Tab>📝 대화 내용 분석</Tab>
+          <Tab>💬 대화 내역</Tab>
         </TabList>
 
         <TabPanel>
@@ -41,6 +43,9 @@ export default function Home() {
         </TabPanel>
         <TabPanel>
           <ChatContent />
+        </TabPanel>
+        <TabPanel>
+          <ChatDetailTab />
         </TabPanel>
       </Tabs>
     </div>
