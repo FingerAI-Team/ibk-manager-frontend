@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, Typography, FormControl, InputLabel, Select, MenuItem, Button, Avatar } from "@mui/material"
-import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis, TooltipProps } from "recharts"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -14,8 +14,9 @@ import { exportDailyChartToExcel } from '@/utils/excel';
 
 const COLORS = {
   chats: 'var(--ibk-blue)',
-  users: 'var(--success-green)'
+  users: '#ff4444'
 }
+
 
 export function DailyChart() {
   const [startDate, setStartDate] = useState<Dayjs>(dayjs().subtract(13, 'day'));
@@ -158,12 +159,17 @@ export function DailyChart() {
                 />
                 <YAxis />
                 <Tooltip 
-                  formatter={(value, name) => [
-                    `${value}${name === "users" ? "명" : "회"}`, 
-                    name === "users" ? "사용자 수" : "대화 수"
-                  ]}
+                  formatter={(value, name) => {
+                    const isUsers = name === 'users';
+                    return [`${value}${isUsers ? '명' : '회'}`, isUsers ? '사용자 수' : '대화 수'];
+                  }}
                   labelFormatter={(label) => dayjs(label).format('YYYY-MM-DD')}
-                  wrapperClassName="chart-tooltip"
+                  contentStyle={{
+                    backgroundColor: 'white',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                  }}
                 />
                 <Line 
                   type="monotone" 
@@ -171,7 +177,7 @@ export function DailyChart() {
                   stroke={COLORS.chats} 
                   name="chats" 
                   dot={false} 
-                  strokeWidth={2} 
+                  strokeWidth={2}
                 />
                 <Line 
                   type="monotone" 
@@ -179,7 +185,7 @@ export function DailyChart() {
                   stroke={COLORS.users} 
                   name="users" 
                   dot={false} 
-                  strokeWidth={2} 
+                  strokeWidth={2}
                 />
               </LineChart>
             </ResponsiveContainer>

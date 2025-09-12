@@ -128,7 +128,7 @@ export function ClickRatioCharts() {
                         data={getUsersPieData()}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
+                        innerRadius={40}
                         outerRadius={80}
                         dataKey="value"
                         nameKey="name"
@@ -171,7 +171,7 @@ export function ClickRatioCharts() {
                         data={getChatsPieData()}
                         cx="50%"
                         cy="50%"
-                        innerRadius={60}
+                        innerRadius={40}
                         outerRadius={80}
                         dataKey="value"
                         nameKey="name"

@@ -1,7 +1,7 @@
 :root {
   /* 색상 변수 */
   --ibk-blue: #0051A4;
-  --success-green: #82ca9d;
+  --success-green: #ff4444;
   --text-secondary: rgba(0, 0, 0, 0.6);
   --error-red: #D32F2F;
   
@@ -168,4 +168,40 @@
 
 .prediction-error {
   color: var(--error-red);
+}
+
+/* 막대 차트 호버 효과 완전 제거 */
+.recharts-bar:hover,
+.recharts-bar-rectangle:hover,
+.recharts-bar-rectangle:focus,
+.recharts-bar:focus,
+.recharts-bar-rectangle:active,
+.recharts-bar:active,
+.recharts-bar-rectangle[style*="opacity"] {
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
+  stroke-opacity: 1 !important;
+  filter: none !important;
+}
+
+/* 툴팁 관련 호버 효과만 제거 */
+.recharts-tooltip-wrapper,
+.recharts-active-bar,
+.recharts-active-dot {
+  pointer-events: none !important;
+}
+
+.recharts-bar-rectangle {
+  transition: none !important;
+}
+
+/* Recharts 내부 호버 스타일 오버라이드 */
+.recharts-bar-rectangle[style*="fill-opacity"] {
+  fill-opacity: 1 !important;
+}
+
+/* SVG 요소 직접 타겟팅 */
+svg .recharts-bar-rectangle:hover {
+  opacity: 1 !important;
+  fill-opacity: 1 !important;
 } 

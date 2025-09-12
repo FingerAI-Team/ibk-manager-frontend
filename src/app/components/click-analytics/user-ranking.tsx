@@ -11,7 +11,7 @@ import type { UserClickData } from '@/app/api/click-analytics/types';
 
 const COLORS = {
   clicks: 'var(--ibk-blue)',
-  chats: 'var(--success-green)'
+  chats: '#ff4444'
 }
 
 type SortKey = 'clicks' | 'chats';
@@ -178,23 +178,6 @@ export function UserRanking() {
             </LocalizationProvider>
           </div>
         </div>
-        <div className="legend-area">
-          <span 
-            className={`legend-item legend-item-clicks ${sortBy === 'clicks' ? 'active' : ''}`}
-            onClick={() => handleSort('clicks')}
-            style={{ cursor: 'pointer' }}
-          >
-            🔻 클릭 횟수 (←)
-          </span>
-          <span className="legend-item">사용자 ID</span>
-          <span 
-            className={`legend-item legend-item-chats ${sortBy === 'chats' ? 'active' : ''}`}
-            onClick={() => handleSort('chats')}
-            style={{ cursor: 'pointer' }}
-          >
-            대화 횟수 (→) 🔻
-          </span>
-        </div>
         <div style={{ display: 'flex', width: '100%', gap: '0' }}>
           {/* 클릭 차트 (우측 정렬) */}
           <div style={{ flex: 1 }}>
@@ -202,23 +185,27 @@ export function UserRanking() {
               <BarChart
                 data={displayData}
                 layout="vertical"
-                mirror
-                margin={{ top: 20, right: 0, left: 20, bottom: 25 }}
+                margin={{ top: 20, right: 10, left: 10, bottom: 40 }}
+                syncId={undefined}
               >
                 <XAxis 
                   type="number"
                   orientation="bottom"
                   tickFormatter={(value) => Math.abs(value).toString()}
+                  domain={['dataMin', 0]}
+                  ticks={[-20, -10, 0]}
                   label={{ 
                     value: '클릭 수', 
                     position: 'bottom',
-                    offset: 15
+                    offset: 15,
+                    style: { textAnchor: 'middle' }
                   }}
                 />
                 <YAxis 
                   type="category"
                   dataKey="userName"
                   orientation="left"
+                  hide
                 />
                 <Bar
                   dataKey="clicks"
@@ -226,8 +213,17 @@ export function UserRanking() {
                   name="클릭 수"
                   onClick={handleBarClick}
                   style={{ cursor: 'pointer' }}
+                  isAnimationActive={false}
+                  onMouseEnter={(data, index, event) => {
+                    // 호버 효과는 제거하되 클릭은 유지
+                    event?.stopPropagation();
+                  }}
                 />
-                <Tooltip formatter={(value) => Math.abs(value) + '회'} />
+                <Tooltip 
+                  formatter={(value) => Math.abs(Number(value)) + '회'} 
+                  cursor={false}
+                  allowEscapeViewBox={{ x: false, y: false }}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -238,15 +234,19 @@ export function UserRanking() {
               <BarChart
                 data={displayData}
                 layout="vertical"
-                margin={{ top: 20, right: 20, left: 0, bottom: 25 }}
+                margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
+                syncId={undefined}
               >
                 <XAxis 
                   type="number"
                   orientation="bottom"
+                  domain={[0, 'dataMax']}
+                  ticks={[0, 10, 20, 30]}
                   label={{ 
                     value: '대화 수', 
                     position: 'bottom',
-                    offset: 15
+                    offset: 15,
+                    style: { textAnchor: 'middle' }
                   }}
                 />
                 <YAxis 
@@ -260,8 +260,17 @@ export function UserRanking() {
                   name="대화 수"
                   onClick={handleBarClick}
                   style={{ cursor: 'pointer' }}
+                  isAnimationActive={false}
+                  onMouseEnter={(data, index, event) => {
+                    // 호버 효과는 제거하되 클릭은 유지
+                    event?.stopPropagation();
+                  }}
                 />
-                <Tooltip formatter={(value) => value + '회'} />
+                <Tooltip 
+                  formatter={(value) => value + '회'} 
+                  cursor={false}
+                  allowEscapeViewBox={{ x: false, y: false }}
+                />
               </BarChart>
             </ResponsiveContainer>
           </div>
