@@ -22,6 +22,8 @@ export function UserRanking() {
   const [endDate, setEndDate] = useState<Dayjs>(dayjs());
   const [allData, setAllData] = useState<UserClickData[]>([]);
   const [displayData, setDisplayData] = useState<UserClickData[]>([]);
+  const [clicksData, setClicksData] = useState<UserClickData[]>([]);
+  const [chatsData, setChatsData] = useState<UserClickData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const transformChartData = (data: UserClickData[]) => {
@@ -29,6 +31,37 @@ export function UserRanking() {
       ...item,
       clicks: -Math.abs(item.clicks)
     }));
+  };
+
+  // 동적 틱 생성 함수
+  const generateTicks = (maxValue: number, isNegative: boolean = false) => {
+    if (maxValue === 0) return [0];
+    
+    // 적절한 간격 계산 (5, 10, 20, 50, 100, 200, 500, 1000 등)
+    const magnitude = Math.pow(10, Math.floor(Math.log10(maxValue)));
+    let step = magnitude;
+    
+    if (maxValue / magnitude > 5) {
+      step = magnitude * 2;
+    } else if (maxValue / magnitude > 2) {
+      step = magnitude;
+    } else {
+      step = magnitude / 2;
+    }
+    
+    const ticks = [];
+    const numTicks = Math.min(Math.ceil(maxValue / step) + 1, 8); // 최대 8개 틱
+    
+    for (let i = 0; i < numTicks; i++) {
+      const value = i * step;
+      if (isNegative) {
+        ticks.push(-value);
+      } else {
+        ticks.push(value);
+      }
+    }
+    
+    return ticks.sort((a, b) => a - b);
   };
 
   const fetchData = async () => {
@@ -40,6 +73,24 @@ export function UserRanking() {
       );
       if (response.success) {
         setAllData(response.data.data);
+        
+        // 클릭 수 기준으로 정렬된 데이터 (왼쪽 차트용)
+        const clicksSortedData = [...response.data.data]
+          .sort((a, b) => b.clicks - a.clicks)
+          .slice(0, 10)
+          .map(item => ({
+            ...item,
+            clicks: -Math.abs(item.clicks)
+          }));
+        setClicksData(clicksSortedData);
+        
+        // 대화 수 기준으로 정렬된 데이터 (오른쪽 차트용)
+        const chatsSortedData = [...response.data.data]
+          .sort((a, b) => b.chats - a.chats)
+          .slice(0, 10);
+        setChatsData(chatsSortedData);
+        
+        // 기존 displayData는 클릭 수 기준으로 유지 (호환성)
         const sortedData = [...response.data.data].sort((a, b) => b.clicks - a.clicks);
         setDisplayData(transformChartData(sortedData));
       }
@@ -183,7 +234,7 @@ export function UserRanking() {
           <div style={{ flex: 1 }}>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart
-                data={displayData}
+                data={clicksData}
                 layout="vertical"
                 margin={{ top: 20, right: 10, left: 10, bottom: 40 }}
                 syncId={undefined}
@@ -193,7 +244,7 @@ export function UserRanking() {
                   orientation="bottom"
                   tickFormatter={(value) => Math.abs(value).toString()}
                   domain={['dataMin', 0]}
-                  ticks={[-20, -10, 0]}
+                  ticks={clicksData.length > 0 ? generateTicks(Math.max(...clicksData.map(d => Math.abs(d.clicks))), true) : [0]}
                   label={{ 
                     value: '클릭 수', 
                     position: 'bottom',
@@ -232,7 +283,7 @@ export function UserRanking() {
           <div style={{ flex: 1 }}>
             <ResponsiveContainer width="100%" height={400}>
               <BarChart
-                data={displayData}
+                data={chatsData}
                 layout="vertical"
                 margin={{ top: 20, right: 30, left: 10, bottom: 40 }}
                 syncId={undefined}
@@ -241,7 +292,7 @@ export function UserRanking() {
                   type="number"
                   orientation="bottom"
                   domain={[0, 'dataMax']}
-                  ticks={[0, 10, 20, 30]}
+                  ticks={chatsData.length > 0 ? generateTicks(Math.max(...chatsData.map(d => d.chats)), false) : [0]}
                   label={{ 
                     value: '대화 수', 
                     position: 'bottom',
