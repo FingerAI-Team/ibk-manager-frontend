@@ -181,11 +181,14 @@ export function HourlyChart() {
                   formatter={(value) => [`${value}회`, "대화 수"]}
                   labelFormatter={(label) => `${label}시`}
                   wrapperClassName="chart-tooltip"
+                  cursor={false}
+                  allowEscapeViewBox={{ x: false, y: false }}
                 />
                 <Bar 
                   dataKey="chats" 
                   fill="var(--ibk-blue)" 
                   name="대화 수"
+                  isAnimationActive={false}
                 />
                 <text 
                     x="50%" 

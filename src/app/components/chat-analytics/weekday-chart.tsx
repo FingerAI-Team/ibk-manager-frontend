@@ -146,14 +146,18 @@ export function WeekdayChart() {
                   }}
                   labelFormatter={(label) => `${label}`}
                   wrapperClassName="chart-tooltip"
+                  cursor={false}
+                  allowEscapeViewBox={{ x: false, y: false }}
                 />
                 <Bar 
                   dataKey="chats" 
                   fill={COLORS.chats}
+                  isAnimationActive={false}
                 />
                 <Bar 
                   dataKey="users" 
                   fill={COLORS.users}
+                  isAnimationActive={false}
                 />
               </BarChart>
             </ResponsiveContainer>

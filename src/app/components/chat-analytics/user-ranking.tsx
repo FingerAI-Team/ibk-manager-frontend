@@ -267,6 +267,8 @@ export function UserRanking() {
                 <Tooltip 
                   formatter={(value) => [`${value}회`, "대화 횟수"]}
                   wrapperClassName="chart-tooltip"
+                  cursor={false}
+                  allowEscapeViewBox={{ x: false, y: false }}
                 />
                 <Bar 
                   dataKey="chats" 
@@ -274,6 +276,7 @@ export function UserRanking() {
                   name="대화 횟수"
                   onClick={handleBarClick}
                   style={{ cursor: 'pointer' }}
+                  isAnimationActive={false}
                 />
                 {(chartData.length === 0 || chartData.every(item => item.chats === 0)) && (
                   <text 
