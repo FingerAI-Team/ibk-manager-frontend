@@ -4,7 +4,7 @@ import {
   Typography,
   Paper
 } from '@mui/material';
-import type { ChatData } from '@/app/api/chat';
+import type { ChatData } from '@/app/api/chat/types';
 
 interface ChatDetailProps {
   selectedChat: ChatData | null;
@@ -18,9 +18,9 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({ selectedChat }) => {
       .replace(/\n/g, '<br>')
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/### (.*?)(<br>|$)/g, '<h3 style="margin-top: 20px; margin-bottom: 10px; color: #1976d2;">$1</h3>')
-      .replace(/## (.*?)(<br>|$)/g, '<h2 style="margin-top: 20px; margin-bottom: 10px; color: #1976d2;">$1</h2>')
-      .replace(/# (.*?)(<br>|$)/g, '<h1 style="margin-top: 20px; margin-bottom: 10px; color: #1976d2;">$1</h1>');
+      .replace(/### (.*?)(<br>|$)/g, '<h3 style="margin-top: 20px; margin-bottom: 10px; color: #000000;">$1</h3>')
+      .replace(/## (.*?)(<br>|$)/g, '<h2 style="margin-top: 20px; margin-bottom: 10px; color: #000000;">$1</h2>')
+      .replace(/# (.*?)(<br>|$)/g, '<h1 style="margin-top: 20px; margin-bottom: 10px; color: #000000;">$1</h1>');
   };
 
   if (!selectedChat) {
@@ -71,9 +71,9 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({ selectedChat }) => {
 
       {/* 답변 내용 */}
       <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}>
-        <Typography variant="h6" sx={{ mb: 1, color: 'primary.main', fontWeight: 'bold' }}>
-          답변
-        </Typography>
+         <Typography variant="h6" sx={{ mb: 0.5, color: 'primary.main', fontWeight: 'bold' }}>
+           답변
+         </Typography>
         <Paper
           sx={{
             p: 2,
@@ -85,31 +85,34 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({ selectedChat }) => {
           }}
         >
           {selectedChat.answer ? (
-            <Box
-              sx={{
-                '& h1, & h2, & h3': {
-                  marginTop: '20px',
-                  marginBottom: '10px',
-                  color: '#1976d2'
-                },
-                '& p': {
-                  marginBottom: '10px',
-                  lineHeight: 1.6
-                },
-                '& strong': {
-                  fontWeight: 'bold'
-                },
-                '& em': {
-                  fontStyle: 'italic'
-                }
-              }}
+             <Box
+               sx={{
+                 '& h1, & h2, & h3': {
+                   marginTop: '20px',
+                   marginBottom: '10px',
+                   color: '#000000'
+                 },
+                 '& p': {
+                   marginBottom: '10px',
+                   lineHeight: 1.6,
+                   color: '#000000'
+                 },
+                 '& strong': {
+                   fontWeight: 'bold',
+                   color: '#000000'
+                 },
+                 '& em': {
+                   fontStyle: 'italic',
+                   color: '#000000'
+                 }
+               }}
               dangerouslySetInnerHTML={{
                 __html: `<p>${formatAnswer(selectedChat.answer)}</p>`
               }}
             />
           ) : (
             <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
-              답변 내용이 없습니다.
+              답변 내용을 찾을 수 없습니다.
             </Typography>
           )}
         </Paper>

@@ -1,20 +1,8 @@
-import { SearchFilters } from '../components/chat-content/search-filters';
-
-export interface ChatData {
-  id: string; // 백엔드에서 string으로 반환됨
-  timestamp: string;
-  userId: string;
-  question: string;
-  answer: string; // 답변 내용 추가
-  isStock: boolean;
-}
-
-interface ChatResponse {
-  items: ChatData[];
-  total: number;
-}
+import { SearchFilters } from '../../components/chat-content/search-filters';
+import { ChatData, ChatResponse } from './types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://ibkai.fingerservice.co.kr/api';  // 원래 서버 주소로 복원
+
 export async function fetchChatList(
   filters: SearchFilters, 
   page: number = 0, 
@@ -91,4 +79,4 @@ export async function fetchAllChatData(filters: SearchFilters, totalCount: numbe
   
   console.log(`🎉 전체 데이터 조회 완료: ${allData.length}개`);
   return allData;
-} 
+}

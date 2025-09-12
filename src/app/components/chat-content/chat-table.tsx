@@ -4,7 +4,7 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
 import { fetchChatList, fetchAllChatData } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
-import type { ChatData } from '@/app/api/chat'
+import type { ChatData } from '@/app/api/chat/types'
 import { exportChatContentToExcel } from '@/utils/excel'
 
 export const ChatTable = forwardRef<

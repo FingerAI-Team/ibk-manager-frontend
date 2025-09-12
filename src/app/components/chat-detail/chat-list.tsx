@@ -7,13 +7,10 @@ import {
   Typography,
   Box,
   CircularProgress,
-  Chip,
   Pagination,
   Stack
 } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
-import type { ChatData } from '@/app/api/chat';
+import type { ChatData } from '@/app/api/chat/types';
 
 interface ChatListProps {
   chatList: ChatData[];
@@ -96,13 +93,16 @@ export const ChatList: React.FC<ChatListProps> = ({
                 <Typography variant="caption" color="text.secondary">
                   {formatDate(chat.timestamp)}
                 </Typography>
-                <Chip
-                  icon={chat.isStock ? <CheckCircleIcon /> : <CancelIcon />}
-                  label={chat.isStock ? '종목' : '일반'}
-                  size="small"
-                  color={chat.isStock ? 'primary' : 'default'}
-                  sx={{ height: 20, fontSize: '0.7rem' }}
-                />
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    color: chat.isStock ? '#1976d2' : '#666666',
+                    fontWeight: 'bold',
+                    fontSize: '0.7rem'
+                  }}
+                >
+                  종목 {chat.isStock ? 'O' : 'X'}
+                </Typography>
               </Box>
 
               {/* 하단: 질문 내용 */}

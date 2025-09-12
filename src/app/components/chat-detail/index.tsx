@@ -3,7 +3,7 @@ import { Box, Grid, Paper, Typography } from '@mui/material';
 import { ChatList } from './chat-list';
 import { ChatDetail } from './chat-detail';
 import { fetchChatList } from '@/app/api/chat';
-import type { ChatData } from '@/app/api/chat';
+import type { ChatData } from '@/app/api/chat/types';
 
 export const ChatDetailTab: React.FC = () => {
   const [chatList, setChatList] = useState<ChatData[]>([]);
