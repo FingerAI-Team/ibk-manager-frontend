@@ -9,8 +9,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #ffffff;
+    --foreground: #171717;
   }
 }
 
@@ -35,4 +35,25 @@ body {
 .admin-header h1 {
   margin: 0;
   white-space: nowrap;
+}
+
+/* react-tabs 스타일 오버라이드 - 활성 탭 강조 표시 제거 */
+.react-tabs__tab--selected {
+  background: transparent !important;
+  border-color: transparent !important;
+  border-bottom: none !important;
+}
+
+.react-tabs__tab-list {
+  border-bottom: 1px solid #ccc !important;
+}
+
+.react-tabs__tab {
+  border: none !important;
+  background: transparent !important;
+  border-bottom: 2px solid transparent !important;
+}
+
+.react-tabs__tab:hover {
+  background: rgba(0, 0, 0, 0.05) !important;
 }
