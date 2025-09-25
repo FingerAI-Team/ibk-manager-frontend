@@ -38,22 +38,60 @@ body {
 }
 
 /* react-tabs 스타일 오버라이드 - 활성 탭 강조 표시 제거 */
+.react-tabs {
+  width: 100% !important;
+  overflow: visible !important;
+}
+
+.react-tabs__tab-list {
+  border-bottom: 1px solid #e0e0e0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+}
 .react-tabs__tab--selected {
   background: transparent !important;
   border-color: transparent !important;
   border-bottom: none !important;
-}
-
-.react-tabs__tab-list {
-  border-bottom: 1px solid #ccc !important;
+  color: #1976d2 !important;
+  font-weight: 600 !important;
 }
 
 .react-tabs__tab {
   border: none !important;
   background: transparent !important;
   border-bottom: 2px solid transparent !important;
+  padding: 12px 20px !important;
+  margin: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+  min-width: fit-content !important;
 }
 
 .react-tabs__tab:hover {
   background: rgba(0, 0, 0, 0.05) !important;
+  border-bottom: 2px solid rgba(25, 118, 210, 0.3) !important;
+}
+
+.react-tabs__tab--selected {
+  background: transparent !important;
+  border-bottom: 2px solid #1976d2 !important;
+  color: #1976d2 !important;
+  font-weight: 600 !important;
+}
+
+.react-tabs__tab--selected:hover {
+  background: rgba(25, 118, 210, 0.05) !important;
+  border-bottom: 2px solid #1976d2 !important;
+}
+
+/* 탭 패널 스타일 */
+.react-tabs__tab-panel {
+  padding: 0 !important;
+  margin: 0 !important;
 }

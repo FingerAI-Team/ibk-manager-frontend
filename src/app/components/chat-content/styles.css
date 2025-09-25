@@ -55,7 +55,59 @@
 }
 
 .chat-table-container table {
-  min-width: 800px;
+  min-width: 1120px !important;  /* 140+300+560+120 = 1120px */
+  table-layout: fixed !important;  /* 고정 레이아웃으로 컬럼 너비 고정 */
+}
+
+/* 테이블 헤더 스타일 */
+.chat-table-container .MuiTableHead-root .MuiTableCell-root {
+  font-weight: bold;
+  background-color: #f5f5f5;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+/* 날짜 컬럼 */
+.chat-table-container .MuiTableBody-root .MuiTableCell-root:nth-child(1),
+.chat-table-container .MuiTableHead-root .MuiTableCell-root:nth-child(1) {
+  width: 140px !important;
+  min-width: 140px !important;
+  max-width: 140px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 사용자 ID 컬럼 */
+.chat-table-container .MuiTableBody-root .MuiTableCell-root:nth-child(2),
+.chat-table-container .MuiTableHead-root .MuiTableCell-root:nth-child(2) {
+  width: 300px !important;
+  min-width: 300px !important;
+  max-width: 300px !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+/* 질문 내용 컬럼 */
+.chat-table-container .MuiTableBody-root .MuiTableCell-root:nth-child(3),
+.chat-table-container .MuiTableHead-root .MuiTableCell-root:nth-child(3) {
+  width: 560px !important;
+  min-width: 560px !important;
+  max-width: 560px !important;
+  word-wrap: break-word;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* 종목 여부 컬럼 */
+.chat-table-container .MuiTableBody-root .MuiTableCell-root:nth-child(4),
+.chat-table-container .MuiTableHead-root .MuiTableCell-root:nth-child(4) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  text-align: center;
 }
 
 .stock-badge {
@@ -99,14 +151,32 @@
 
 .table-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;  /* 세로 방향으로 변경 */
   padding: 0 var(--spacing-md);
   background: white;
   border-top: 1px solid var(--border-color);
+  min-width: 1120px !important;  /* 테이블과 동일한 최소 너비 */
+  overflow-x: auto;   /* 가로 스크롤 허용 */
+}
+
+/* TablePagination 컴포넌트 스타일 */
+.table-footer .MuiTablePagination-root {
+  min-width: 100%;
+  overflow: visible;
+}
+
+.table-footer .MuiTablePagination-toolbar {
+  min-width: 100%;
+  padding: 0;
+}
+
+.table-footer .MuiTablePagination-spacer {
+  flex: 1;
 }
 
 .required-notice {
   font-size: 0.875rem;
   color: var(--text-secondary);
+  margin-bottom: 8px;  /* 페이지네이션과의 간격 */
+  white-space: nowrap;  /* 텍스트가 세로로 표시되지 않도록 */
 } 

@@ -23,23 +23,32 @@ export const ChatTable = forwardRef<
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
-  const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0) => {
+  const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
       setLoading(true);
       setError(null);
       setCurrentFilters(filters);
-      const response = await fetchChatList(filters, pageNum, rowsPerPage);
-      setChatData(response.items);
-      setTotal(response.total);
+      console.log('🔄 데이터 로딩 시작:', { pageNum, pageSize, filters });
+      
+      const response = await fetchChatList(filters, pageNum, pageSize);
+      console.log('✅ 데이터 로딩 완료:', { items: response.items.length, total: response.total });
+      
+      // 상태 업데이트를 명시적으로 처리
+      setChatData([]); // 먼저 기존 데이터 클리어
+      setTimeout(() => {
+        setChatData(response.items);
+        setTotal(response.total);
+      }, 10); // 약간의 지연으로 UI 업데이트 보장
+      
     } catch (error) {
-      console.error('Failed to fetch chat data:', error);
+      console.error('❌ 데이터 로딩 실패:', error);
       setError('데이터 조회에 실패했습니다. 조회 기간을 확인해 주세요.');
       setChatData([]);
       setTotal(0);
     } finally {
       setLoading(false);
     }
-  }, [rowsPerPage]);
+  }, []);
 
   const exportToExcel = useCallback(async () => {
     console.log('🔍 디버깅 정보:', { currentFilters, total, chatData: chatData.length });
@@ -82,7 +91,7 @@ export const ChatTable = forwardRef<
   useImperativeHandle(ref, () => ({
     loadChatData: (filters: SearchFilters) => {
       setPage(0); // 새로운 검색시 첫 페이지로
-      loadChatData(filters, 0);
+      loadChatData(filters, 0, rowsPerPage);
     },
     exportToExcel,
     isExporting
@@ -90,38 +99,19 @@ export const ChatTable = forwardRef<
 
   const handleChangePage = (event: unknown, newPage: number) => {
     if (!currentFilters) return;
+    console.log('📄 페이지 변경:', newPage);
     setPage(newPage);
-    loadChatData(currentFilters, newPage); // 현재 필터와 새 페이지 번호로 데이터 로드
+    loadChatData(currentFilters, newPage, rowsPerPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!currentFilters) return;
     const newRowsPerPage = parseInt(event.target.value, 10);
+    console.log('📊 페이지 크기 변경:', newRowsPerPage);
     setRowsPerPage(newRowsPerPage);
     setPage(0);
-    loadChatData(currentFilters, 0); // 페이지 크기 변경시 첫 페이지로
+    loadChatData(currentFilters, 0, newRowsPerPage);
   };
-
-  if (loading) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
-        <CircularProgress />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        padding: '2rem',
-        color: '#d32f2f'
-      }}>
-        {error}
-      </div>
-    );
-  }
 
   return (
     <>
@@ -136,9 +126,21 @@ export const ChatTable = forwardRef<
             </TableRow>
           </TableHead>
           <TableBody>
-            {chatData.length > 0 ? (
-              chatData.map((row) => (
-                <TableRow key={row.id}>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center" sx={{ padding: '2rem' }}>
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
+            ) : error ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center" sx={{ padding: '2rem', color: '#d32f2f' }}>
+                  {error}
+                </TableCell>
+              </TableRow>
+            ) : chatData.length > 0 ? (
+              chatData.map((row, index) => (
+                <TableRow key={`${row.id}-${index}`}>
                   <TableCell>{row.timestamp}</TableCell>
                   <TableCell>{row.userId}</TableCell>
                   <TableCell>{row.question}</TableCell>
