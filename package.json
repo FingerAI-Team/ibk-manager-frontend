@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "log-analyzer": "ts-node src/scripts/log-analyzer.ts",
+    "server-logger": "ts-node src/scripts/server-logger.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

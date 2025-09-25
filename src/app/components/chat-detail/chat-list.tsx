@@ -128,12 +128,16 @@ export const ChatList: React.FC<ChatListProps> = ({
       </List>
 
       {/* 페이지네이션 */}
-      {totalPages > 1 && (
-        <Box sx={{ mt: 0.5, pt: 0.5, borderTop: '1px solid #e0e0e0' }}>
-          <Stack spacing={0.3} alignItems="center">
-            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
-              {currentPage * 10 + 1}-{Math.min((currentPage + 1) * 10, totalCount)} / 전체 {totalCount}개
-            </Typography>
+      <Box sx={{ mt: 0.5, pt: 0.5, borderTop: '1px solid #e0e0e0' }}>
+        <Stack spacing={0.3} alignItems="center">
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.75rem' }}>
+            {currentPage * 10 + 1}-{Math.min((currentPage + 1) * 10, totalCount)} / 전체 {totalCount}개
+          </Typography>
+          {/* 디버깅 정보 추가 */}
+          <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+            총 페이지: {totalPages}개
+          </Typography>
+          {totalPages > 1 ? (
             <Pagination
               count={totalPages}
               page={currentPage + 1}
@@ -155,9 +159,13 @@ export const ChatList: React.FC<ChatListProps> = ({
                 }
               }}
             />
-          </Stack>
-        </Box>
-      )}
+          ) : (
+            <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.7rem' }}>
+              페이지가 1개뿐입니다
+            </Typography>
+          )}
+        </Stack>
+      </Box>
     </Box>
   );
 };

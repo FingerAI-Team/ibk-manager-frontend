@@ -60,7 +60,24 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({ selectedChat }) => {
             borderRadius: 2,
             minHeight: '80px',
             maxHeight: '150px',
-            overflow: 'auto'
+            overflow: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '3px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#888',
+              borderRadius: '3px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#555',
+            },
+            // Firefox용 스크롤바
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#888 #f1f1f1',
           }}
         >
           <Typography variant="body1" sx={{ lineHeight: 1.6 }}>
@@ -81,7 +98,26 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({ selectedChat }) => {
             border: '1px solid #e0e0e0',
             borderRadius: 2,
             flex: 1,
-            overflow: 'auto'
+            overflow: 'auto',
+            maxHeight: 'calc(100vh - 400px)', // 높이를 더 줄임 (300px → 400px)
+            '&::-webkit-scrollbar': {
+              width: '8px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '4px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#888',
+              borderRadius: '4px',
+              border: '1px solid #f1f1f1',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#555',
+            },
+            // Firefox용 스크롤바
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#888 #f1f1f1',
           }}
         >
           {selectedChat.answer ? (
