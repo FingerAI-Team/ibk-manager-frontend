@@ -18,7 +18,7 @@ export function getBusinessDay(date: Dayjs = dayjs()): Dayjs {
 }
 
 export function DateSelector({ onDateChange }: DateSelectorProps) {
-  const [selectedDate, setSelectedDate] = useState<Dayjs>(getBusinessDay(dayjs().subtract(1, 'day')))
+  const [selectedDate, setSelectedDate] = useState<Dayjs>(getBusinessDay(dayjs()))
 
   // 영업일 체크 함수
   const isBusinessDay = (date: Dayjs) => {

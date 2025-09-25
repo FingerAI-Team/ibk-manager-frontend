@@ -11,7 +11,7 @@ import './styles.css'
 import axios from 'axios'
 
 export function HomeStats() {
-  const [selectedDate, setSelectedDate] = useState(dayjs().subtract(1, 'day'))
+  const [selectedDate, setSelectedDate] = useState(dayjs())
   const [stats, setStats] = useState<DailyStats | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

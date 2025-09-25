@@ -43,6 +43,21 @@ body {
   overflow: visible !important;
 }
 
+/* react-tabs 기본 스타일 완전 제거 */
+.react-tabs * {
+  box-sizing: border-box !important;
+}
+
+.react-tabs__tab:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.react-tabs__tab:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .react-tabs__tab-list {
   border-bottom: 1px solid #e0e0e0 !important;
   margin: 0 !important;
@@ -51,13 +66,17 @@ body {
   flex-wrap: nowrap !important;
   overflow-x: auto !important;
   white-space: nowrap !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 .react-tabs__tab--selected {
   background: transparent !important;
   border-color: transparent !important;
-  border-bottom: none !important;
+  border-bottom: 2px solid #1976d2 !important;
   color: #1976d2 !important;
   font-weight: 600 !important;
+  box-shadow: none !important;
+  outline: none !important;
 }
 
 .react-tabs__tab {
@@ -71,6 +90,11 @@ body {
   flex-shrink: 0 !important;
   white-space: nowrap !important;
   min-width: fit-content !important;
+  position: relative !important;
+  z-index: 2 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border-radius: 0 !important;
 }
 
 .react-tabs__tab:hover {
@@ -94,4 +118,7 @@ body {
 .react-tabs__tab-panel {
   padding: 0 !important;
   margin: 0 !important;
+  position: relative !important;
+  z-index: 0 !important;
+  margin-top: -1px !important; /* 구분선과 겹치지 않도록 */
 }
