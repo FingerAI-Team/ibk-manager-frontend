@@ -204,4 +204,12 @@
 /* 제목 스타일 */
 .stats-title {
   margin-bottom: 0.5rem;
+}
+
+/* 데이터 수집 안내 문구 */
+.data-collection-notice {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: #999;
 } 

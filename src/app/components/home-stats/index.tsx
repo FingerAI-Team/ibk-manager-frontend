@@ -90,6 +90,10 @@ export function HomeStats() {
           />
         </div>
       )}
+      
+      <div className="data-collection-notice">
+        * 데이터 수집은 매 정시 5분에 진행됩니다.
+      </div>
     </div>
   )
 } 
