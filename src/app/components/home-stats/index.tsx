@@ -93,7 +93,7 @@ export function HomeStats() {
       </div>
       
       <div className="data-collection-notice">
-        * 데이터 수집은 매 시간 5분, 종목 예측은 매 시간 6분에 진행됩니다.
+        * 데이터 수집 및 처리는 매 정시 5분에 진행됩니다.
       </div>
     </div>
   )
