@@ -16,6 +16,20 @@ export function HomeStats() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // 기본값 설정
+  const defaultStats: DailyStats = {
+    chatCount: 0,
+    chatCountDiff: 0,
+    userCount: 0,
+    userCountDiff: 0,
+    clickRatio: 0,
+    predictionStats: {
+      total: 0,
+      success: 0,
+      failure: 0
+    }
+  }
+
   useEffect(() => {
     const fetchDailyStats = async () => {
       setLoading(true)
@@ -54,28 +68,28 @@ export function HomeStats() {
       
       {loading ? (
         <div>로딩 중...</div>
-      ) : stats ? (
+      ) : (
         <div className="stats-grid">
           <ChatCount 
             selectedDate={selectedDate}
-            count={stats.chatCount}
-            diffPercent={stats.chatCountDiff}
+            count={stats?.chatCount ?? defaultStats.chatCount}
+            diffPercent={stats?.chatCountDiff ?? defaultStats.chatCountDiff}
           />
           <UserCount 
             selectedDate={selectedDate}
-            count={stats.userCount}
-            diffPercent={stats.userCountDiff}
+            count={stats?.userCount ?? defaultStats.userCount}
+            diffPercent={stats?.userCountDiff ?? defaultStats.userCountDiff}
           />
           <ClickRatio 
             selectedDate={selectedDate}
-            clickRatio={stats.clickRatio}
+            clickRatio={stats?.clickRatio ?? defaultStats.clickRatio}
           />
           <PredictionCount 
             selectedDate={selectedDate}
-            predictionStats={stats.predictionStats}
+            predictionStats={stats?.predictionStats ?? defaultStats.predictionStats}
           />
         </div>
-      ) : null}
+      )}
     </div>
   )
 } 
