@@ -22,11 +22,14 @@ export function HomeStats() {
     chatCountDiff: 0,
     userCount: 0,
     userCountDiff: 0,
-    clickRatio: 0,
+    clickRatio: {
+      click: { count: 0, ratio: 0 },
+      nonClick: { count: 0, ratio: 0 }
+    },
     predictionStats: {
-      total: 0,
-      success: 0,
-      failure: 0
+      correct: 0,
+      incorrect: 0,
+      accuracy: 0
     }
   }
 
@@ -66,30 +69,30 @@ export function HomeStats() {
       
       {error && <div className="error-message">{error}</div>}
       
-      {loading ? (
-        <div>로딩 중...</div>
-      ) : (
-        <div className="stats-grid">
-          <ChatCount 
-            selectedDate={selectedDate}
-            count={stats?.chatCount ?? defaultStats.chatCount}
-            diffPercent={stats?.chatCountDiff ?? defaultStats.chatCountDiff}
-          />
-          <UserCount 
-            selectedDate={selectedDate}
-            count={stats?.userCount ?? defaultStats.userCount}
-            diffPercent={stats?.userCountDiff ?? defaultStats.userCountDiff}
-          />
-          <ClickRatio 
-            selectedDate={selectedDate}
-            clickRatio={stats?.clickRatio ?? defaultStats.clickRatio}
-          />
-          <PredictionCount 
-            selectedDate={selectedDate}
-            predictionStats={stats?.predictionStats ?? defaultStats.predictionStats}
-          />
-        </div>
-      )}
+      <div className="stats-grid">
+        <ChatCount 
+          selectedDate={selectedDate}
+          count={stats?.chatCount ?? defaultStats.chatCount}
+          diffPercent={stats?.chatCountDiff ?? defaultStats.chatCountDiff}
+          loading={loading}
+        />
+        <UserCount 
+          selectedDate={selectedDate}
+          count={stats?.userCount ?? defaultStats.userCount}
+          diffPercent={stats?.userCountDiff ?? defaultStats.userCountDiff}
+          loading={loading}
+        />
+        <ClickRatio 
+          selectedDate={selectedDate}
+          clickRatio={stats?.clickRatio ?? defaultStats.clickRatio}
+          loading={loading}
+        />
+        <PredictionCount 
+          selectedDate={selectedDate}
+          predictionStats={stats?.predictionStats ?? defaultStats.predictionStats}
+          loading={loading}
+        />
+      </div>
       
       <div className="data-collection-notice">
         * 데이터 수집은 매 정시 5분에 진행됩니다.

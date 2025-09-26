@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography, CircularProgress } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import type { Props as LegendProps } from 'recharts/types/component/DefaultLegendContent';
 import dayjs from 'dayjs';
@@ -24,9 +24,10 @@ interface ClickRatioProps {
     click: { count: number; ratio: number; };
     nonClick: { count: number; ratio: number; };
   };
+  loading?: boolean;
 }
 
-export function ClickRatio({ selectedDate, clickRatio }: ClickRatioProps) {
+export function ClickRatio({ selectedDate, clickRatio, loading = false }: ClickRatioProps) {
   const isYesterday = selectedDate.isSame(dayjs().subtract(1, 'day'), 'day');
   const defaultRatio = { count: 0, ratio: 0 };
   
@@ -128,7 +129,16 @@ export function ClickRatio({ selectedDate, clickRatio }: ClickRatioProps) {
           {isYesterday ? '전일' : selectedDate.format('MM/DD')} 종목 버튼 클릭 여부
         </Typography>
         <div className="click-ratio-chart">
-          {isEmpty ? (
+          {loading ? (
+            <div style={{ 
+              height: '220px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <CircularProgress size={40} />
+            </div>
+          ) : isEmpty ? (
             <Typography 
               variant="body1" 
               color="text.secondary"
