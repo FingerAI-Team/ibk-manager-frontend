@@ -30,14 +30,17 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
   const [keyword, setKeyword] = useState('');
 
   const handleSearch = () => {
-    onSearch({
+    const searchData = {
       startDate: startDate?.format('YYYY-MM-DD') || null,
       endDate: endDate?.format('YYYY-MM-DD') || null,
       isStock,
       media,
       userId,
       keyword
-    });
+    };
+    
+    console.log('🔍 검색 필터 데이터:', searchData);
+    onSearch(searchData);
   };
 
   return (

@@ -174,26 +174,28 @@
 
 .table-footer {
   display: flex;
-  flex-direction: column;  /* 세로 방향으로 변경 */
-  padding: 0 var(--spacing-md);
+  flex-direction: column;
+  padding: var(--spacing-md);
   background: white;
   border-top: 1px solid var(--border-color);
-  min-width: 100% !important;  /* 전체 너비 사용 */
-  overflow-x: visible;   /* 가로 스크롤 제거 */
   width: 100%;
+  box-sizing: border-box;
 }
 
 /* TablePagination 컴포넌트 스타일 */
 .table-footer .MuiTablePagination-root {
-  min-width: 100%;
+  width: 100%;
   overflow: visible;
-  flex-shrink: 0; /* 축소 방지 */
+  flex-shrink: 0;
+  border: none;
 }
 
 .table-footer .MuiTablePagination-toolbar {
-  min-width: 100%;
-  padding: 8px 0; /* 상하 패딩 추가 */
-  flex-wrap: nowrap; /* 줄바꿈 방지 */
+  width: 100%;
+  padding: 0;
+  min-height: 52px;
+  flex-wrap: nowrap;
+  justify-content: space-between;
 }
 
 .table-footer .MuiTablePagination-spacer {
@@ -204,11 +206,30 @@
 .table-footer .MuiTablePagination-actions {
   display: flex !important;
   visibility: visible !important;
+  opacity: 1 !important;
+  margin-left: 16px;
 }
 
-.table-footer .MuiIconButton-root {
+.table-footer .MuiTablePagination-actions .MuiIconButton-root {
   display: flex !important;
   visibility: visible !important;
+  opacity: 1 !important;
+  padding: 8px;
+}
+
+/* 페이지네이션 정보 텍스트 */
+.table-footer .MuiTablePagination-displayedRows {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* 페이지당 행 수 선택 */
+.table-footer .MuiTablePagination-selectLabel,
+.table-footer .MuiTablePagination-select {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 .required-notice {

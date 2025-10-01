@@ -8,6 +8,16 @@ export async function fetchChatList(
   page: number = 0, 
   pageSize: number = 10
 ): Promise<ChatResponse> {
+  // 디버깅을 위한 필터 정보 로깅
+  console.log('🔍 필터 정보:', {
+    startDate: filters.startDate,
+    endDate: filters.endDate,
+    isStock: filters.isStock,
+    media: filters.media,
+    userId: filters.userId,
+    keyword: filters.keyword
+  });
+
   const queryParams = new URLSearchParams({
     page: page.toString(),
     pageSize: pageSize.toString(),
@@ -21,6 +31,7 @@ export async function fetchChatList(
 
   const fullUrl = `${API_BASE_URL}/chats?${queryParams}`;
   console.log('🔗 API URL:', fullUrl);
+  console.log('📋 쿼리 파라미터:', queryParams.toString());
   
   const response = await fetch(fullUrl);
   

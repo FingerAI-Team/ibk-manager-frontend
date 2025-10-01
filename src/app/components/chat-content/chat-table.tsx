@@ -33,12 +33,19 @@ export const ChatTable = forwardRef<
       const response = await fetchChatList(filters, pageNum, pageSize);
       console.log('✅ 데이터 로딩 완료:', { items: response.items.length, total: response.total });
       
-      // 상태 업데이트를 명시적으로 처리
-      setChatData([]); // 먼저 기존 데이터 클리어
-      setTimeout(() => {
-        setChatData(response.items);
-        setTotal(response.total);
-      }, 10); // 약간의 지연으로 UI 업데이트 보장
+      // 상태 업데이트를 즉시 처리 (setTimeout 제거)
+      setChatData(response.items);
+      setTotal(response.total);
+      setPage(pageNum); // 현재 페이지도 업데이트
+      
+      // 디버깅을 위한 페이지네이션 정보 출력
+      console.log('📊 페이지네이션 정보:', {
+        currentPage: pageNum,
+        totalItems: response.total,
+        itemsPerPage: pageSize,
+        totalPages: Math.ceil(response.total / pageSize),
+        currentItems: response.items.length
+      });
       
     } catch (error) {
       console.error('❌ 데이터 로딩 실패:', error);
@@ -117,25 +124,24 @@ export const ChatTable = forwardRef<
     <>
       <TableContainer component={Paper} className="chat-table-container">
         <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>날짜</TableCell>
-            <TableCell>사용자 ID</TableCell>
-            <TableCell>질문 내용</TableCell>
-            <TableCell>매체 구분</TableCell>
-            <TableCell>종목 여부</TableCell>
-          </TableRow>
-        </TableHead>
+          <TableHead>
+            <TableRow>
+              <TableCell>날짜</TableCell>
+              <TableCell>사용자 ID</TableCell>
+              <TableCell>질문 내용</TableCell>
+              <TableCell>종목 여부</TableCell>
+            </TableRow>
+          </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ padding: '2rem' }}>
+                <TableCell colSpan={4} align="center" sx={{ padding: '2rem' }}>
                   <CircularProgress />
                 </TableCell>
               </TableRow>
             ) : error ? (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ padding: '2rem', color: '#d32f2f' }}>
+                <TableCell colSpan={4} align="center" sx={{ padding: '2rem', color: '#d32f2f' }}>
                   {error}
                 </TableCell>
               </TableRow>
@@ -145,11 +151,6 @@ export const ChatTable = forwardRef<
                   <TableCell>{row.timestamp}</TableCell>
                   <TableCell>{row.userId}</TableCell>
                   <TableCell>{row.question}</TableCell>
-                  <TableCell>
-                    <div className="media-badge">
-                      {row.media || '전체'}
-                    </div>
-                  </TableCell>
                   <TableCell>
                     <div className={`stock-badge stock-badge-${row.isStock}`}>
                       {row.isStock ? (
@@ -169,7 +170,7 @@ export const ChatTable = forwardRef<
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell colSpan={4} align="center">
                   검색 결과가 없습니다.
                 </TableCell>
               </TableRow>
@@ -188,9 +189,10 @@ export const ChatTable = forwardRef<
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[5, 10, 25]}
           labelRowsPerPage="페이지당 행 수:"
-          labelDisplayedRows={({ from, to, count }) => 
-            `${from}-${to} / 전체 ${count}`
-          }
+          labelDisplayedRows={({ from, to, count }) => {
+            console.log('📄 페이지네이션 표시 정보:', { from, to, count, page, total, rowsPerPage });
+            return `${from}-${to} / 전체 ${count}`;
+          }}
         />
       </div>
     </>
