@@ -54,8 +54,15 @@ html {
   padding: 0 !important;
   display: flex !important;
   flex-wrap: nowrap !important;
-  overflow-x: auto !important;
+  overflow-x: hidden !important; /* 스크롤바 제거 */
   white-space: nowrap !important;
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.react-tabs__tab-list::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 .react-tabs__tab--selected {
   background: transparent !important;

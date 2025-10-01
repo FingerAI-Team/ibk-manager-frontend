@@ -29,6 +29,7 @@ export const ChatTable = forwardRef<
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
       setLoading(true);
@@ -41,7 +42,15 @@ export const ChatTable = forwardRef<
       
       // 상태 업데이트를 즉시 처리 (setTimeout 제거)
       setChatData(response.items);
-      setTotal(response.total);
+      
+      // total 값 설정 전후 로깅
+      console.log('🔢 Total 값 설정 전:', { 
+        receivedTotal: response.total, 
+        totalType: typeof response.total,
+        willSetTotal: response.total || 0 
+      });
+      
+      setTotal(response.total || 0);
       setPage(pageNum); // 현재 페이지도 업데이트
       
       // 디버깅을 위한 페이지네이션 정보 출력
@@ -49,7 +58,7 @@ export const ChatTable = forwardRef<
         currentPage: pageNum,
         totalItems: response.total,
         itemsPerPage: pageSize,
-        totalPages: Math.ceil(response.total / pageSize),
+        totalPages: Math.ceil((response.total || 0) / pageSize),
         currentItems: response.items.length
       });
       

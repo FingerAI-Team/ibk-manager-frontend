@@ -53,6 +53,15 @@ export async function fetchChatList(
   const data = await response.json();
   console.log('✅ API Response data:', data);
   
+  // total 값 상세 로깅
+  console.log('📊 Total 값 확인:', {
+    total: data.total,
+    totalType: typeof data.total,
+    hasTotal: 'total' in data,
+    itemsLength: data.items?.length || 0,
+    fullResponse: data
+  });
+  
   // 매체 구분 데이터 상세 로깅
   if (data.items && data.items.length > 0) {
     console.log('📱 응답 데이터의 매체 구분 샘플:', data.items.slice(0, 3).map((item: any) => ({
