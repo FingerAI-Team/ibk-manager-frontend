@@ -45,7 +45,7 @@ export function ChatContent() {
           <div className="chat-content-header">
             <div className="title-container">
               <Typography variant="h6" className="content-title">대화 내용 조회</Typography>
-              <Typography variant="caption" className="required-notice">* 조회 기간은 필수 입력 항목입니다.</Typography>
+              <Typography variant="caption" className="required-notice">* 시작일과 종료일은 필수 입력 항목입니다.</Typography>
             </div>
             <SearchFilters onSearch={handleSearch} onExcelDownload={handleExcelDownload} isExporting={isExporting} />
           </div>
@@ -67,7 +67,7 @@ export function ChatContent() {
           `${from}-${to} / 전체 ${count}`
         }
         sx={{
-          marginTop: 2,
+          marginTop: 1,
           padding: 0,
           border: 'none',
           boxShadow: 'none',

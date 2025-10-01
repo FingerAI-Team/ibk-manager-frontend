@@ -18,6 +18,11 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden; /* 가로 스크롤바 제거 */
+}
+
+html {
+  overflow-x: hidden; /* 가로 스크롤바 제거 */
 }
 
 .admin-header {
