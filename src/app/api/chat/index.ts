@@ -82,6 +82,13 @@ export async function fetchChatList(
   
   // tenantId를 media로 변환
   if (data.items && data.items.length > 0) {
+    console.log('🔍 변환 전 원본 데이터 샘플:', data.items.slice(0, 3).map((item: any) => ({
+      id: item.id,
+      tenantId: item.tenantId,
+      tenantIdType: typeof item.tenantId,
+      hasTenantId: 'tenantId' in item
+    })));
+    
     data.items = data.items.map((item: any) => {
       // tenantId를 media로 매핑
       const tenantToMedia: { [key: string]: string } = {
@@ -89,7 +96,14 @@ export async function fetchChatList(
         'ibk': 'i-One Bank'
       };
       
+      // tenantId가 없거나 매핑되지 않는 경우 '전체'로 설정
       item.media = tenantToMedia[item.tenantId] || '전체';
+      
+      console.log('🔄 매체 구분 변환:', {
+        tenantId: item.tenantId,
+        mappedMedia: item.media,
+        originalTenantId: item.tenantId
+      });
       
       return item;
     });

@@ -189,9 +189,7 @@ export const ChatTable = forwardRef<
                 <TableCell>{row.question}</TableCell>
                 <TableCell>
                   <div className="media-badge">
-                    {currentFilters?.media && currentFilters.media !== 'all' 
-                      ? currentFilters.media 
-                      : (row.media || '전체')}
+                    {row.media || '전체'}
                   </div>
                 </TableCell>
                 <TableCell>
