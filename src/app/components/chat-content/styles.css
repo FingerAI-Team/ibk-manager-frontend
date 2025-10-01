@@ -8,6 +8,7 @@
   height: 100vh;  /* 전체 높이 설정 */
   overflow-y: auto;  /* 세로 스크롤 추가 */
   padding: var(--spacing-lg);  /* 여백 추가 */
+  box-sizing: border-box; /* 패딩을 포함한 크기 계산 */
 }
 
 .chat-content-header {
@@ -60,7 +61,7 @@
 }
 
 .chat-table-container table {
-  min-width: 1240px !important;  /* 140+300+560+120+120 = 1240px */
+  min-width: 1360px !important;  /* 140+300+560+120+120+120 = 1360px (매체 구분 컬럼 추가) */
   table-layout: fixed !important;  /* 고정 레이아웃으로 컬럼 너비 고정 */
 }
 
@@ -180,11 +181,14 @@
   border-top: 1px solid var(--border-color);
   width: 100%;
   box-sizing: border-box;
+  overflow-x: auto; /* 가로 스크롤 추가 */
+  min-width: 0; /* flex 아이템이 축소될 수 있도록 */
 }
 
 /* TablePagination 컴포넌트 스타일 */
 .table-footer .MuiTablePagination-root {
   width: 100%;
+  min-width: 600px; /* 페이지네이션 버튼들이 잘리지 않도록 최소 너비 설정 */
   overflow: visible;
   flex-shrink: 0;
   border: none;
