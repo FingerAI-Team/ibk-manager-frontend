@@ -161,8 +161,9 @@
 
 .title-container {
   display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
+  flex-direction: row;
+  align-items: baseline;
+  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
 }
 
@@ -176,11 +177,11 @@
 .table-footer {
   display: flex;
   flex-direction: column;
-  padding: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   background: white;
   border: 1px solid var(--border-color);
   border-radius: 4px;
-  margin-top: var(--spacing-md);
+  margin-top: var(--spacing-sm);
   width: 100%;
   box-sizing: border-box;
   overflow-x: auto; /* 가로 스크롤 추가 */
@@ -240,8 +241,8 @@
 }
 
 .required-notice {
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
-  margin-bottom: 8px;  /* 페이지네이션과의 간격 */
-  white-space: nowrap;  /* 텍스트가 세로로 표시되지 않도록 */
+  white-space: nowrap;
+  margin: 0;
 } 

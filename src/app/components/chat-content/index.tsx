@@ -43,7 +43,10 @@ export function ChatContent() {
       <Card>
         <CardContent>
           <div className="chat-content-header">
-            <Typography variant="h6" className="content-title">대화 내용 조회</Typography>
+            <div className="title-container">
+              <Typography variant="h6" className="content-title">대화 내용 조회</Typography>
+              <Typography variant="caption" className="required-notice">* 조회 기간은 필수 입력 항목입니다.</Typography>
+            </div>
             <SearchFilters onSearch={handleSearch} onExcelDownload={handleExcelDownload} isExporting={isExporting} />
           </div>
           <ChatTable ref={tableRef} />
@@ -52,7 +55,6 @@ export function ChatContent() {
       
       {/* 페이지네이션을 Card 바깥으로 이동 */}
       <div className="table-footer">
-        <div className="required-notice">* 조회 기간은 필수 입력 항목입니다.</div>
         <TablePagination
           component="div"
           count={tableRef.current?.total || 0}
