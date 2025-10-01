@@ -117,24 +117,25 @@ export const ChatTable = forwardRef<
     <>
       <TableContainer component={Paper} className="chat-table-container">
         <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>날짜</TableCell>
-              <TableCell>사용자 ID</TableCell>
-              <TableCell>질문 내용</TableCell>
-              <TableCell>종목 여부</TableCell>
-            </TableRow>
-          </TableHead>
+        <TableHead>
+          <TableRow>
+            <TableCell>날짜</TableCell>
+            <TableCell>사용자 ID</TableCell>
+            <TableCell>질문 내용</TableCell>
+            <TableCell>매체 구분</TableCell>
+            <TableCell>종목 여부</TableCell>
+          </TableRow>
+        </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={4} align="center" sx={{ padding: '2rem' }}>
+                <TableCell colSpan={5} align="center" sx={{ padding: '2rem' }}>
                   <CircularProgress />
                 </TableCell>
               </TableRow>
             ) : error ? (
               <TableRow>
-                <TableCell colSpan={4} align="center" sx={{ padding: '2rem', color: '#d32f2f' }}>
+                <TableCell colSpan={5} align="center" sx={{ padding: '2rem', color: '#d32f2f' }}>
                   {error}
                 </TableCell>
               </TableRow>
@@ -144,6 +145,11 @@ export const ChatTable = forwardRef<
                   <TableCell>{row.timestamp}</TableCell>
                   <TableCell>{row.userId}</TableCell>
                   <TableCell>{row.question}</TableCell>
+                  <TableCell>
+                    <div className="media-badge">
+                      {row.media || '전체'}
+                    </div>
+                  </TableCell>
                   <TableCell>
                     <div className={`stock-badge stock-badge-${row.isStock}`}>
                       {row.isStock ? (
@@ -163,7 +169,7 @@ export const ChatTable = forwardRef<
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={5} align="center">
                   검색 결과가 없습니다.
                 </TableCell>
               </TableRow>

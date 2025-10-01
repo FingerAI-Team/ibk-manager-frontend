@@ -81,21 +81,39 @@ export const ChatList: React.FC<ChatListProps> = ({
                 },
               }}
             >
-              {/* 상단: 날짜와 종목 여부 */}
+              {/* 상단: 날짜, 매체 구분, 종목 여부 */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mb: 1 }}>
                 <Typography variant="caption" color="text.secondary">
                   {formatDate(chat.timestamp)}
                 </Typography>
-                <Typography 
-                  variant="caption" 
-                  sx={{ 
-                    color: chat.isStock ? '#1976d2' : '#666666',
-                    fontWeight: 'bold',
-                    fontSize: '0.7rem'
-                  }}
-                >
-                  종목 {chat.isStock ? 'O' : 'X'}
-                </Typography>
+                <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                  {/* 매체 구분 */}
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      color: '#1976d2',
+                      fontWeight: 'bold',
+                      fontSize: '0.7rem',
+                      backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                      padding: '2px 6px',
+                      borderRadius: '3px',
+                      border: '1px solid rgba(25, 118, 210, 0.2)'
+                    }}
+                  >
+                    {chat.media || '전체'}
+                  </Typography>
+                  {/* 종목 여부 */}
+                  <Typography 
+                    variant="caption" 
+                    sx={{ 
+                      color: chat.isStock ? '#1976d2' : '#666666',
+                      fontWeight: 'bold',
+                      fontSize: '0.7rem'
+                    }}
+                  >
+                    종목 {chat.isStock ? 'O' : 'X'}
+                  </Typography>
+                </Box>
               </Box>
 
               {/* 하단: 질문 내용 */}

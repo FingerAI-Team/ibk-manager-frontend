@@ -21,7 +21,7 @@
 .search-filters {
   display: flex;
   flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 */
-  gap: var(--spacing-md);
+  gap: 8px; /* 간격을 더 줄임 */
   align-items: center;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: var(--spacing-md);
@@ -29,21 +29,26 @@
 
 /* 입력 필드 크기 통일 */
 .search-form-control {
-  min-width: 200px !important;  /* Select 컴포넌트 너비 */
+  min-width: 160px !important;  /* Select 컴포넌트 너비 줄임 */
+}
+
+/* 종목 여부 필드만 더 작게 */
+.search-form-control[data-field="isStock"] {
+  min-width: 100px !important;
 }
 
 .search-user-input {
-  min-width: 200px !important;  /* 사용자 ID 입력창 너비 */
+  min-width: 160px !important;  /* 사용자 ID 입력창 너비 줄임 */
 }
 
 /* DatePicker 스타일 오버라이드 */
 .search-filters .MuiTextField-root {
-  min-width: 200px !important;  /* DatePicker 너비 */
+  min-width: 160px !important;  /* DatePicker 너비 줄임 */
 }
 
 .search-button {
   height: 40px;
-  padding: 0 var(--spacing-md);
+  padding: 0 16px;
   min-width: 80px;  /* 버튼 최소 너비 설정 */
   font-size: 0.875rem;  /* 버튼 텍스트 크기 조정 */
 }
@@ -55,7 +60,7 @@
 }
 
 .chat-table-container table {
-  min-width: 1120px !important;  /* 140+300+560+120 = 1120px */
+  min-width: 1240px !important;  /* 140+300+560+120+120 = 1240px */
   table-layout: fixed !important;  /* 고정 레이아웃으로 컬럼 너비 고정 */
 }
 
@@ -93,17 +98,26 @@
 /* 질문 내용 컬럼 */
 .chat-table-container .MuiTableBody-root .MuiTableCell-root:nth-child(3),
 .chat-table-container .MuiTableHead-root .MuiTableCell-root:nth-child(3) {
-  width: 560px !important;
-  min-width: 560px !important;
-  max-width: 560px !important;
+  width: 480px !important;
+  min-width: 480px !important;
+  max-width: 480px !important;
   word-wrap: break-word;
   word-break: break-word;
   line-height: 1.4;
 }
 
-/* 종목 여부 컬럼 */
+/* 매체 구분 컬럼 */
 .chat-table-container .MuiTableBody-root .MuiTableCell-root:nth-child(4),
 .chat-table-container .MuiTableHead-root .MuiTableCell-root:nth-child(4) {
+  width: 120px !important;
+  min-width: 120px !important;
+  max-width: 120px !important;
+  text-align: center;
+}
+
+/* 종목 여부 컬럼 */
+.chat-table-container .MuiTableBody-root .MuiTableCell-root:nth-child(5),
+.chat-table-container .MuiTableHead-root .MuiTableCell-root:nth-child(5) {
   width: 120px !important;
   min-width: 120px !important;
   max-width: 120px !important;
@@ -122,6 +136,19 @@
 
 .stock-badge-false {
   color: var(--text-secondary);
+}
+
+.media-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--ibk-blue);
+  background-color: rgba(0, 81, 164, 0.1);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 81, 164, 0.2);
 }
 
 /* CSS 변수 */
@@ -155,7 +182,7 @@
   padding: 0 var(--spacing-md);
   background: white;
   border-top: 1px solid var(--border-color);
-  min-width: 1120px !important;  /* 테이블과 동일한 최소 너비 */
+  min-width: 1240px !important;  /* 테이블과 동일한 최소 너비 */
   overflow-x: auto;   /* 가로 스크롤 허용 */
 }
 

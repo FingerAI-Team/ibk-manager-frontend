@@ -14,6 +14,7 @@ export async function fetchChatList(
     startDate: filters.startDate || '',  // 필수 필드 - 빈 값이라도 전달
     endDate: filters.endDate || '',      // 필수 필드 - 빈 값이라도 전달
     ...(filters.isStock !== 'all' && { isStock: filters.isStock }),
+    ...(filters.media !== 'all' && { media: filters.media }),
     ...(filters.userId && { userId: filters.userId }),
     ...(filters.keyword && { keyword: filters.keyword })
   });

@@ -64,13 +64,21 @@ export async function GET(request: NextRequest) {
     const endDate = searchParams.get('endDate') || '';
     const page = parseInt(searchParams.get('page') || '0');
     const pageSize = parseInt(searchParams.get('pageSize') || '10');
+    const isStock = searchParams.get('isStock');
+    const media = searchParams.get('media');
+    const userId = searchParams.get('userId');
+    const keyword = searchParams.get('keyword');
     
     // 외부 API 호출
     const queryParams = new URLSearchParams({
       page: page.toString(),
       pageSize: pageSize.toString(),
       startDate,
-      endDate
+      endDate,
+      ...(isStock && { isStock }),
+      ...(media && { media }),
+      ...(userId && { userId }),
+      ...(keyword && { keyword })
     });
     
     const apiUrl = `${API_BASE_URL}/chats?${queryParams}`;

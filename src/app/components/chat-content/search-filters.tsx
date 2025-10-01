@@ -16,6 +16,7 @@ export interface SearchFilters {
   startDate: string | null;
   endDate: string | null;
   isStock: string;
+  media: string;
   userId: string;
   keyword: string;
 }
@@ -24,6 +25,7 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [isStock, setIsStock] = useState('all');
+  const [media, setMedia] = useState('all');
   const [userId, setUserId] = useState('');
   const [keyword, setKeyword] = useState('');
 
@@ -32,6 +34,7 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
       startDate: startDate?.format('YYYY-MM-DD') || null,
       endDate: endDate?.format('YYYY-MM-DD') || null,
       isStock,
+      media,
       userId,
       keyword
     });
@@ -54,7 +57,7 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
         />
       </LocalizationProvider>
       
-      <FormControl size="small" className="search-form-control">
+      <FormControl size="small" className="search-form-control" data-field="isStock" sx={{ minWidth: '100px' }}>
         <InputLabel>종목 여부</InputLabel>
         <Select 
           label="종목 여부" 
@@ -64,6 +67,19 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
           <MenuItem value="all">전체</MenuItem>
           <MenuItem value="stock">종목</MenuItem>
           <MenuItem value="non-stock">일반</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl size="small" className="search-form-control">
+        <InputLabel>매체 구분</InputLabel>
+        <Select 
+          label="매체 구분" 
+          value={media}
+          onChange={(e) => setMedia(e.target.value)}
+        >
+          <MenuItem value="all">전체</MenuItem>
+          <MenuItem value="MTS">MTS</MenuItem>
+          <MenuItem value="i-One Bank">i-One Bank</MenuItem>
         </Select>
       </FormControl>
 
@@ -89,6 +105,12 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
         startIcon={<SearchIcon />}
         className="search-button"
         onClick={handleSearch}
+        sx={{
+          minWidth: '80px',
+          height: '40px',
+          padding: '0 16px',
+          fontSize: '0.875rem'
+        }}
       >
         검색
       </Button>
@@ -98,8 +120,8 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
         onClick={onExcelDownload}
         disabled={isExporting}
         sx={{ 
-          minWidth: '45px',
-          height: '45px',
+          minWidth: '40px',
+          height: '40px',
           padding: '8px',
           borderRadius: '6px',
           borderColor: '#d0d0d0',
@@ -121,8 +143,8 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
             src="/excel.png"
             alt="Excel"
             sx={{ 
-              width: 28, 
-              height: 28,
+              width: 24, 
+              height: 24,
               backgroundColor: 'transparent'
             }}
           />

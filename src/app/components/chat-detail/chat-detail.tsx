@@ -47,6 +47,40 @@ export const ChatDetail: React.FC<ChatDetailProps> = ({ selectedChat }) => {
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {/* 메타 정보 */}
+      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 1 }}>
+        <Typography variant="body2" color="text.secondary">
+          {new Date(selectedChat.timestamp).toLocaleString('ko-KR')}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          사용자: {selectedChat.userId}
+        </Typography>
+        <Box sx={{ 
+          display: 'inline-block',
+          backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          color: '#1976d2',
+          padding: '2px 8px',
+          borderRadius: '4px',
+          fontSize: '0.75rem',
+          fontWeight: 'bold',
+          border: '1px solid rgba(25, 118, 210, 0.2)'
+        }}>
+          {selectedChat.media || '전체'}
+        </Box>
+        <Box sx={{ 
+          display: 'inline-block',
+          backgroundColor: selectedChat.isStock ? 'rgba(25, 118, 210, 0.1)' : 'rgba(102, 102, 102, 0.1)',
+          color: selectedChat.isStock ? '#1976d2' : '#666666',
+          padding: '2px 8px',
+          borderRadius: '4px',
+          fontSize: '0.75rem',
+          fontWeight: 'bold',
+          border: `1px solid ${selectedChat.isStock ? 'rgba(25, 118, 210, 0.2)' : 'rgba(102, 102, 102, 0.2)'}`
+        }}>
+          종목 {selectedChat.isStock ? 'O' : 'X'}
+        </Box>
+      </Box>
+
       {/* 질문 내용 */}
       <Box>
         <Typography variant="h6" sx={{ mb: 1, color: 'primary.main', fontWeight: 'bold' }}>

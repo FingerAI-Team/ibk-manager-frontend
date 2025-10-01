@@ -6,6 +6,7 @@ export interface ChatData {
   question: string;
   answer: string; // 답변 내용 추가
   isStock: boolean;
+  media?: string; // 매체 구분 추가
 }
 
 // 채팅 응답 타입
