@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography } from "@mui/material"
+import { Card, CardContent, Typography, TablePagination } from "@mui/material"
 import { SearchFilters } from './search-filters'
 import { ChatTable } from './chat-table'
 import React, { useState, useRef } from 'react'
@@ -12,6 +12,12 @@ export function ChatContent() {
     loadChatData: (filters: SearchFiltersType) => void;
     exportToExcel: () => void;
     isExporting: boolean;
+    // 페이지네이션 관련 상태와 함수들
+    page: number;
+    total: number;
+    rowsPerPage: number;
+    handleChangePage: (event: unknown, newPage: number) => void;
+    handleChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
   }>(null);
 
   const handleSearch = (filters: SearchFiltersType) => {
@@ -43,6 +49,24 @@ export function ChatContent() {
           <ChatTable ref={tableRef} />
         </CardContent>
       </Card>
+      
+      {/* 페이지네이션을 Card 바깥으로 이동 */}
+      <div className="table-footer">
+        <div className="required-notice">* 조회 기간은 필수 입력 항목입니다.</div>
+        <TablePagination
+          component="div"
+          count={tableRef.current?.total || 0}
+          page={tableRef.current?.page || 0}
+          onPageChange={tableRef.current?.handleChangePage || (() => {})}
+          rowsPerPage={tableRef.current?.rowsPerPage || 10}
+          onRowsPerPageChange={tableRef.current?.handleChangeRowsPerPage || (() => {})}
+          rowsPerPageOptions={[5, 10, 25]}
+          labelRowsPerPage="페이지당 행 수:"
+          labelDisplayedRows={({ from, to, count }) => 
+            `${from}-${to} / 전체 ${count}`
+          }
+        />
+      </div>
     </div>
   )
 } 

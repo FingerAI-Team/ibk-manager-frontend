@@ -12,8 +12,14 @@ export const ChatTable = forwardRef<
     loadChatData: (filters: SearchFilters) => void;
     exportToExcel: () => void;
     isExporting: boolean;
+    // 페이지네이션 관련 상태와 함수들
+    page: number;
+    total: number;
+    rowsPerPage: number;
+    handleChangePage: (event: unknown, newPage: number) => void;
+    handleChangeRowsPerPage: (event: React.ChangeEvent<HTMLInputElement>) => void;
   },
-  Record<string, never>
+  {}
 >((props, ref) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +52,21 @@ export const ChatTable = forwardRef<
         totalPages: Math.ceil(response.total / pageSize),
         currentItems: response.items.length
       });
+      
+      // 매체 구분 데이터 디버깅
+      if (response.items.length > 0) {
+        console.log('📱 매체 구분 데이터 샘플:', response.items.slice(0, 3).map(item => ({
+          id: item.id,
+          media: item.media,
+          userId: item.userId,
+          selectedMedia: filters.media
+        })));
+        console.log('📱 백엔드 매핑 정보:', {
+          'all': 'None (모든 tenant_id)',
+          'MTS': 'ibks',
+          'i-One Bank': 'ibk'
+        });
+      }
       
     } catch (error) {
       console.error('❌ 데이터 로딩 실패:', error);
@@ -101,7 +122,13 @@ export const ChatTable = forwardRef<
       loadChatData(filters, 0, rowsPerPage);
     },
     exportToExcel,
-    isExporting
+    isExporting,
+    // 페이지네이션 관련 값들 노출
+    page,
+    total,
+    rowsPerPage,
+    handleChangePage,
+    handleChangeRowsPerPage
   }));
 
   const handleChangePage = (event: unknown, newPage: number) => {
@@ -121,87 +148,70 @@ export const ChatTable = forwardRef<
   };
 
   return (
-    <>
-      <TableContainer component={Paper} className="chat-table-container">
-        <Table>
-          <TableHead>
+    <TableContainer component={Paper} className="chat-table-container">
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>날짜</TableCell>
+            <TableCell>사용자 ID</TableCell>
+            <TableCell>질문 내용</TableCell>
+            <TableCell>매체 구분</TableCell>
+            <TableCell>종목 여부</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {loading ? (
             <TableRow>
-              <TableCell>날짜</TableCell>
-              <TableCell>사용자 ID</TableCell>
-              <TableCell>질문 내용</TableCell>
-              <TableCell>매체 구분</TableCell>
-              <TableCell>종목 여부</TableCell>
+              <TableCell colSpan={5} align="center" sx={{ padding: '2rem' }}>
+                <CircularProgress />
+              </TableCell>
             </TableRow>
-          </TableHead>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ padding: '2rem' }}>
-                  <CircularProgress />
+          ) : error ? (
+            <TableRow>
+              <TableCell colSpan={5} align="center" sx={{ padding: '2rem', color: '#d32f2f' }}>
+                {error}
+              </TableCell>
+            </TableRow>
+          ) : chatData.length > 0 ? (
+            chatData.map((row, index) => (
+              <TableRow key={`${row.id}-${index}`}>
+                <TableCell>{row.timestamp}</TableCell>
+                <TableCell>{row.userId}</TableCell>
+                <TableCell>{row.question}</TableCell>
+                <TableCell>
+                  <div className="media-badge">
+                    {currentFilters?.media && currentFilters.media !== 'all' 
+                      ? currentFilters.media 
+                      : (row.media || '전체')}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className={`stock-badge stock-badge-${row.isStock}`}>
+                    {row.isStock ? (
+                      <>
+                        <CheckCircleIcon fontSize="small" />
+                        <span>종목</span>
+                      </>
+                    ) : (
+                      <>
+                        <CancelIcon fontSize="small" />
+                        <span>일반</span>
+                      </>
+                    )}
+                  </div>
                 </TableCell>
               </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ padding: '2rem', color: '#d32f2f' }}>
-                  {error}
-                </TableCell>
-              </TableRow>
-            ) : chatData.length > 0 ? (
-              chatData.map((row, index) => (
-                <TableRow key={`${row.id}-${index}`}>
-                  <TableCell>{row.timestamp}</TableCell>
-                  <TableCell>{row.userId}</TableCell>
-                  <TableCell>{row.question}</TableCell>
-                  <TableCell>
-                    <div className="media-badge">
-                      {row.media || '전체'}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className={`stock-badge stock-badge-${row.isStock}`}>
-                      {row.isStock ? (
-                        <>
-                          <CheckCircleIcon fontSize="small" />
-                          <span>종목</span>
-                        </>
-                      ) : (
-                        <>
-                          <CancelIcon fontSize="small" />
-                          <span>일반</span>
-                        </>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  검색 결과가 없습니다.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <div className="table-footer">
-        <div className="required-notice">* 조회 기간은 필수 입력 항목입니다.</div>
-        <TablePagination
-          component="div"
-          count={total}
-          page={page}
-          onPageChange={handleChangePage}
-          rowsPerPage={rowsPerPage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          rowsPerPageOptions={[5, 10, 25]}
-          labelRowsPerPage="페이지당 행 수:"
-          labelDisplayedRows={({ from, to, count }) => {
-            console.log('📄 페이지네이션 표시 정보:', { from, to, count, page, total, rowsPerPage });
-            return `${from}-${to} / 전체 ${count}`;
-          }}
-        />
-      </div>
-    </>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5} align="center">
+                검색 결과가 없습니다.
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 });
 

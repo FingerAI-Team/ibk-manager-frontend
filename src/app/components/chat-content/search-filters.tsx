@@ -40,6 +40,7 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
     };
     
     console.log('🔍 검색 필터 데이터:', searchData);
+    console.log('📱 매체 구분 선택값:', { media, mediaType: typeof media, isAll: media === 'all' });
     onSearch(searchData);
   };
 

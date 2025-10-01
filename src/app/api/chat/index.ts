@@ -17,6 +17,13 @@ export async function fetchChatList(
     userId: filters.userId,
     keyword: filters.keyword
   });
+  
+  // 매체 구분 필터 상세 로깅
+  console.log('📱 매체 구분 필터 상세:', {
+    mediaValue: filters.media,
+    isNotAll: filters.media !== 'all',
+    willIncludeInParams: filters.media !== 'all' && filters.media
+  });
 
   const queryParams = new URLSearchParams({
     page: page.toString(),
@@ -45,6 +52,17 @@ export async function fetchChatList(
 
   const data = await response.json();
   console.log('✅ API Response data:', data);
+  
+  // 매체 구분 데이터 상세 로깅
+  if (data.items && data.items.length > 0) {
+    console.log('📱 응답 데이터의 매체 구분 샘플:', data.items.slice(0, 3).map((item: any) => ({
+      id: item.id,
+      media: item.media,
+      mediaType: typeof item.media,
+      hasMedia: 'media' in item
+    })));
+  }
+  
   return data;
 }
 
