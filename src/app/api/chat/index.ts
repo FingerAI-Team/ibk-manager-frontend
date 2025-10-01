@@ -25,13 +25,31 @@ export async function fetchChatList(
     willIncludeInParams: filters.media !== 'all' && filters.media
   });
 
+  // 매체 구분을 tenant_id로 매핑
+  const getTenantId = (media: string) => {
+    const mapping: { [key: string]: string | null } = {
+      'all': null,
+      'MTS': 'ibks',
+      'i-One Bank': 'ibk'
+    };
+    return mapping[media] || null;
+  };
+
+  const tenantId = getTenantId(filters.media);
+  
+  console.log('🏢 Tenant ID 매핑:', {
+    media: filters.media,
+    mappedTenantId: tenantId,
+    willIncludeInParams: tenantId !== null
+  });
+  
   const queryParams = new URLSearchParams({
     page: page.toString(),
     pageSize: pageSize.toString(),
     startDate: filters.startDate || '',  // 필수 필드 - 빈 값이라도 전달
     endDate: filters.endDate || '',      // 필수 필드 - 빈 값이라도 전달
     ...(filters.isStock !== 'all' && { isStock: filters.isStock }),
-    ...(filters.media !== 'all' && { media: filters.media }),
+    ...(tenantId !== null && { tenant_id: tenantId }), // media 대신 tenant_id 사용
     ...(filters.userId && { userId: filters.userId }),
     ...(filters.keyword && { keyword: filters.keyword })
   });
@@ -62,12 +80,24 @@ export async function fetchChatList(
     fullResponse: data
   });
   
-  // 매체 구분 데이터 상세 로깅
+  // tenantId를 media로 변환
   if (data.items && data.items.length > 0) {
-    console.log('📱 응답 데이터의 매체 구분 샘플:', data.items.slice(0, 3).map((item: any) => ({
+    data.items = data.items.map((item: any) => {
+      // tenantId를 media로 매핑
+      const tenantToMedia: { [key: string]: string } = {
+        'ibks': 'MTS',
+        'ibk': 'i-One Bank'
+      };
+      
+      item.media = tenantToMedia[item.tenantId] || '전체';
+      
+      return item;
+    });
+    
+    console.log('📱 매체 구분 변환 후 샘플:', data.items.slice(0, 3).map((item: any) => ({
       id: item.id,
+      tenantId: item.tenantId,
       media: item.media,
-      mediaType: typeof item.media,
       hasMedia: 'media' in item
     })));
   }
