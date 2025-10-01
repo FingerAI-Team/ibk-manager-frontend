@@ -29,28 +29,28 @@
 
 /* 입력 필드 크기 통일 */
 .search-form-control {
-  min-width: 160px !important;  /* Select 컴포넌트 너비 줄임 */
+  min-width: 140px !important;  /* Select 컴포넌트 너비 더 줄임 */
 }
 
 /* 종목 여부 필드만 더 작게 */
 .search-form-control[data-field="isStock"] {
-  min-width: 100px !important;
+  min-width: 90px !important;
 }
 
 .search-user-input {
-  min-width: 160px !important;  /* 사용자 ID 입력창 너비 줄임 */
+  min-width: 140px !important;  /* 사용자 ID 입력창 너비 더 줄임 */
 }
 
 /* DatePicker 스타일 오버라이드 */
 .search-filters .MuiTextField-root {
-  min-width: 160px !important;  /* DatePicker 너비 줄임 */
+  min-width: 140px !important;  /* DatePicker 너비 더 줄임 */
 }
 
 .search-button {
   height: 40px;
-  padding: 0 16px;
-  min-width: 80px;  /* 버튼 최소 너비 설정 */
-  font-size: 0.875rem;  /* 버튼 텍스트 크기 조정 */
+  padding: 0 12px;
+  min-width: 70px;  /* 버튼 최소 너비 설정 */
+  font-size: 0.8rem;  /* 버튼 텍스트 크기 조정 */
 }
 
 /* 테이블 스타일 */
@@ -144,11 +144,7 @@
   justify-content: center;
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--ibk-blue);
-  background-color: rgba(0, 81, 164, 0.1);
-  padding: 4px 8px;
-  border-radius: 4px;
-  border: 1px solid rgba(0, 81, 164, 0.2);
+  color: var(--text-secondary);
 }
 
 /* CSS 변수 */
@@ -182,23 +178,37 @@
   padding: 0 var(--spacing-md);
   background: white;
   border-top: 1px solid var(--border-color);
-  min-width: 1240px !important;  /* 테이블과 동일한 최소 너비 */
-  overflow-x: auto;   /* 가로 스크롤 허용 */
+  min-width: 100% !important;  /* 전체 너비 사용 */
+  overflow-x: visible;   /* 가로 스크롤 제거 */
+  width: 100%;
 }
 
 /* TablePagination 컴포넌트 스타일 */
 .table-footer .MuiTablePagination-root {
   min-width: 100%;
   overflow: visible;
+  flex-shrink: 0; /* 축소 방지 */
 }
 
 .table-footer .MuiTablePagination-toolbar {
   min-width: 100%;
-  padding: 0;
+  padding: 8px 0; /* 상하 패딩 추가 */
+  flex-wrap: nowrap; /* 줄바꿈 방지 */
 }
 
 .table-footer .MuiTablePagination-spacer {
   flex: 1;
+}
+
+/* 페이지네이션 버튼들이 보이도록 보장 */
+.table-footer .MuiTablePagination-actions {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.table-footer .MuiIconButton-root {
+  display: flex !important;
+  visibility: visible !important;
 }
 
 .required-notice {

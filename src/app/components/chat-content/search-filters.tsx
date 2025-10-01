@@ -57,7 +57,7 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
         />
       </LocalizationProvider>
       
-      <FormControl size="small" className="search-form-control" data-field="isStock" sx={{ minWidth: '100px' }}>
+      <FormControl size="small" className="search-form-control" data-field="isStock" sx={{ minWidth: '90px' }}>
         <InputLabel>종목 여부</InputLabel>
         <Select 
           label="종목 여부" 
@@ -106,10 +106,10 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
         className="search-button"
         onClick={handleSearch}
         sx={{
-          minWidth: '80px',
+          minWidth: '70px',
           height: '40px',
-          padding: '0 16px',
-          fontSize: '0.875rem'
+          padding: '0 12px',
+          fontSize: '0.8rem'
         }}
       >
         검색
@@ -120,9 +120,9 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
         onClick={onExcelDownload}
         disabled={isExporting}
         sx={{ 
-          minWidth: '40px',
+          minWidth: '36px',
           height: '40px',
-          padding: '8px',
+          padding: '6px',
           borderRadius: '6px',
           borderColor: '#d0d0d0',
           '&:hover': {
@@ -137,14 +137,14 @@ export function SearchFilters({ onSearch, onExcelDownload, isExporting = false }
         title={isExporting ? "다운로드 중..." : "전체 데이터 엑셀 다운로드"}
       >
         {isExporting ? (
-          <CircularProgress size={20} />
+          <CircularProgress size={18} />
         ) : (
           <Avatar
             src="/excel.png"
             alt="Excel"
             sx={{ 
-              width: 24, 
-              height: 24,
+              width: 22, 
+              height: 22,
               backgroundColor: 'transparent'
             }}
           />
