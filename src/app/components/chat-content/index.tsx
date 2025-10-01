@@ -53,22 +53,27 @@ export function ChatContent() {
         </CardContent>
       </Card>
       
-      {/* 페이지네이션을 Card 바깥으로 이동 */}
-      <div className="table-footer">
-        <TablePagination
-          component="div"
-          count={tableRef.current?.total || 0}
-          page={tableRef.current?.page || 0}
-          onPageChange={tableRef.current?.handleChangePage || (() => {})}
-          rowsPerPage={tableRef.current?.rowsPerPage || 10}
-          onRowsPerPageChange={tableRef.current?.handleChangeRowsPerPage || (() => {})}
-          rowsPerPageOptions={[5, 10, 25]}
-          labelRowsPerPage="페이지당 행 수:"
-          labelDisplayedRows={({ from, to, count }) => 
-            `${from}-${to} / 전체 ${count}`
-          }
-        />
-      </div>
+      {/* 페이지네이션을 Card 바깥으로 이동 (박스 없이) */}
+      <TablePagination
+        component="div"
+        count={tableRef.current?.total || 0}
+        page={tableRef.current?.page || 0}
+        onPageChange={tableRef.current?.handleChangePage || (() => {})}
+        rowsPerPage={tableRef.current?.rowsPerPage || 10}
+        onRowsPerPageChange={tableRef.current?.handleChangeRowsPerPage || (() => {})}
+        rowsPerPageOptions={[5, 10, 25]}
+        labelRowsPerPage="페이지당 행 수:"
+        labelDisplayedRows={({ from, to, count }) => 
+          `${from}-${to} / 전체 ${count}`
+        }
+        sx={{
+          marginTop: 2,
+          padding: 0,
+          border: 'none',
+          boxShadow: 'none',
+          backgroundColor: 'transparent'
+        }}
+      />
     </div>
   )
 } 
