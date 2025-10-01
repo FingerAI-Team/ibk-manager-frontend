@@ -82,33 +82,57 @@ export async function fetchChatList(
   
   // tenantId를 media로 변환
   if (data.items && data.items.length > 0) {
-    console.log('🔍 변환 전 원본 데이터 샘플:', data.items.slice(0, 3).map((item: any) => ({
+    console.log('🔍 변환 전 원본 데이터 샘플:', data.items.slice(0, 5).map((item: any) => ({
       id: item.id,
       tenantId: item.tenantId,
       tenantIdType: typeof item.tenantId,
-      hasTenantId: 'tenantId' in item
+      tenantIdValue: JSON.stringify(item.tenantId),
+      hasTenantId: 'tenantId' in item,
+      allKeys: Object.keys(item)
     })));
     
     data.items = data.items.map((item: any) => {
       // tenantId를 media로 매핑
       const tenantToMedia: { [key: string]: string } = {
         'ibks': 'MTS',
-        'ibk': 'i-One Bank'
+        'ibk': 'i-One Bank',
+        'null': '전체',
+        'undefined': '전체',
+        null: '전체',
+        undefined: '전체'
       };
       
-      // tenantId가 없거나 매핑되지 않는 경우 '전체'로 설정
-      item.media = tenantToMedia[item.tenantId] || '전체';
+      // tenantId 값 확인 및 매핑
+      const tenantIdValue = item.tenantId;
+      let mappedMedia = '전체'; // 기본값
+      
+      if (tenantIdValue === null || tenantIdValue === undefined || tenantIdValue === '') {
+        mappedMedia = '전체';
+      } else if (tenantToMedia[tenantIdValue]) {
+        mappedMedia = tenantToMedia[tenantIdValue];
+      } else {
+        // 예상치 못한 값인 경우 로깅
+        console.warn('⚠️ 예상치 못한 tenantId 값:', {
+          tenantId: tenantIdValue,
+          type: typeof tenantIdValue,
+          itemId: item.id
+        });
+        mappedMedia = '전체';
+      }
+      
+      item.media = mappedMedia;
       
       console.log('🔄 매체 구분 변환:', {
-        tenantId: item.tenantId,
-        mappedMedia: item.media,
-        originalTenantId: item.tenantId
+        originalTenantId: tenantIdValue,
+        tenantIdType: typeof tenantIdValue,
+        mappedMedia: mappedMedia,
+        itemId: item.id
       });
       
       return item;
     });
     
-    console.log('📱 매체 구분 변환 후 샘플:', data.items.slice(0, 3).map((item: any) => ({
+    console.log('📱 매체 구분 변환 후 샘플:', data.items.slice(0, 5).map((item: any) => ({
       id: item.id,
       tenantId: item.tenantId,
       media: item.media,
