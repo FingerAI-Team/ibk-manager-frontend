@@ -67,8 +67,11 @@ export const ChatTable = forwardRef<
         console.log('📱 매체 구분 데이터 샘플:', response.items.slice(0, 3).map(item => ({
           id: item.id,
           media: item.media,
+          tenantId: item.tenantId,
           userId: item.userId,
-          selectedMedia: filters.media
+          selectedMedia: filters.media,
+          hasMedia: 'media' in item,
+          hasTenantId: 'tenantId' in item
         })));
         console.log('📱 백엔드 매핑 정보:', {
           'all': 'None (모든 tenant_id)',
