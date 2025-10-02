@@ -35,7 +35,8 @@ export const ChatTable = forwardRef<
       setLoading(true);
       setError(null);
       setCurrentFilters(filters);
-      console.log('🔄 데이터 로딩 시작:', { pageNum, pageSize, filters });
+      setRowsPerPage(pageSize); // 페이지 크기 상태 업데이트
+      console.log('🔄 데이터 로딩 시작:', { pageNum, pageSize, filters, currentRowsPerPage: rowsPerPage });
       
       const response = await fetchChatList(filters, pageNum, pageSize);
       console.log('✅ 데이터 로딩 완료:', { items: response.items.length, total: response.total });

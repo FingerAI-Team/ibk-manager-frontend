@@ -44,10 +44,12 @@ export function ChatContent() {
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newRowsPerPage = parseInt(event.target.value, 10);
+    console.log('🔄 부모 컴포넌트 - 행 수 변경:', { newRowsPerPage, currentRowsPerPage: rowsPerPage });
     setRowsPerPage(newRowsPerPage);
     setPage(0); // 페이지를 첫 페이지로 리셋
     // 현재 필터로 새 행 수로 데이터 로드
     if (currentFilters && tableRef.current) {
+      console.log('🔄 부모 컴포넌트 - 데이터 로드 호출:', { currentFilters, page: 0, pageSize: newRowsPerPage });
       tableRef.current.loadChatData(currentFilters, 0, newRowsPerPage);
     }
   };
