@@ -59,16 +59,26 @@ export const ChatTable = forwardRef<
         console.log('🔄 첫 페이지 재호출 결과:', { total: totalValue });
       }
       
-      setTotal(totalValue || response.items.length);
+      const finalTotal = totalValue || response.items.length;
+      setTotal(finalTotal);
       setPage(pageNum); // 현재 페이지도 업데이트
+      
+      console.log('🎯 최종 Total 설정:', {
+        finalTotal,
+        totalValue,
+        itemsLength: response.items.length,
+        willSetTotal: finalTotal
+      });
       
       // 디버깅을 위한 페이지네이션 정보 출력
       console.log('📊 페이지네이션 정보:', {
         currentPage: pageNum,
-        totalItems: response.total,
+        totalItems: totalValue,
+        finalTotalValue: totalValue,
         itemsPerPage: pageSize,
-        totalPages: Math.ceil((response.total || 0) / pageSize),
-        currentItems: response.items.length
+        totalPages: Math.ceil((totalValue || 0) / pageSize),
+        currentItems: response.items.length,
+        willSetTotal: totalValue || response.items.length
       });
     } catch (error) {
       console.error('❌ 데이터 로딩 실패:', error);
