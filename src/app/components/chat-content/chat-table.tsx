@@ -138,7 +138,7 @@ export const ChatTable = forwardRef<
   };
 
   return (
-    <TableContainer component={Paper} className="chat-table-container">
+    <TableContainer className="chat-table-container">
       <Table>
         <TableHead>
           <TableRow>

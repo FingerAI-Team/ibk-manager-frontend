@@ -56,6 +56,9 @@
 .chat-table-container {
   width: 100%;
   overflow-x: auto;  /* 가로 스크롤만 유지 */
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 
 .chat-table-container table {
