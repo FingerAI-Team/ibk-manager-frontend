@@ -80,63 +80,60 @@ export async function fetchChatList(
     fullResponse: data
   });
   
-  // tenantId를 media로 변환
+  // tenant_id를 매체명으로 변환 (UI 표시용)
   if (data.items && data.items.length > 0) {
     console.log('🔍 변환 전 원본 데이터 샘플:', data.items.slice(0, 5).map((item: any) => ({
       id: item.id,
-      tenantId: item.tenantId,
-      tenantIdType: typeof item.tenantId,
-      tenantIdValue: JSON.stringify(item.tenantId),
-      hasTenantId: 'tenantId' in item,
+      tenant_id: item.tenant_id,
+      tenantIdType: typeof item.tenant_id,
+      tenantIdValue: JSON.stringify(item.tenant_id),
+      hasTenantId: 'tenant_id' in item,
       allKeys: Object.keys(item)
     })));
     
     data.items = data.items.map((item: any) => {
-      // tenantId를 media로 매핑
-      const tenantToMedia: { [key: string]: string } = {
+      // tenant_id를 매체명으로 매핑 (UI 표시용)
+      const tenantToMediaName: { [key: string]: string } = {
         'ibks': 'MTS',
-        'ibk': 'i-One Bank',
-        'null': '전체',
-        'undefined': '전체',
-        null: '전체',
-        undefined: '전체'
+        'ibk': 'i-One Bank'
       };
       
-      // tenantId 값 확인 및 매핑
-      const tenantIdValue = item.tenantId;
-      let mappedMedia = '전체'; // 기본값
+      // tenant_id 값 확인 및 매핑
+      const tenantIdValue = item.tenant_id;
+      let mediaName = '전체'; // 기본값
       
       if (tenantIdValue === null || tenantIdValue === undefined || tenantIdValue === '') {
-        mappedMedia = '전체';
-      } else if (tenantToMedia[tenantIdValue]) {
-        mappedMedia = tenantToMedia[tenantIdValue];
+        mediaName = '전체';
+      } else if (tenantToMediaName[tenantIdValue]) {
+        mediaName = tenantToMediaName[tenantIdValue];
       } else {
         // 예상치 못한 값인 경우 로깅
-        console.warn('⚠️ 예상치 못한 tenantId 값:', {
-          tenantId: tenantIdValue,
+        console.warn('⚠️ 예상치 못한 tenant_id 값:', {
+          tenant_id: tenantIdValue,
           type: typeof tenantIdValue,
           itemId: item.id
         });
-        mappedMedia = '전체';
+        mediaName = '전체';
       }
       
-      item.media = mappedMedia;
+      // UI 표시용 매체명 추가 (기존 tenant_id는 유지)
+      item.mediaName = mediaName;
       
-      console.log('🔄 매체 구분 변환:', {
+      console.log('🔄 매체명 변환:', {
         originalTenantId: tenantIdValue,
         tenantIdType: typeof tenantIdValue,
-        mappedMedia: mappedMedia,
+        mediaName: mediaName,
         itemId: item.id
       });
       
       return item;
     });
     
-    console.log('📱 매체 구분 변환 후 샘플:', data.items.slice(0, 5).map((item: any) => ({
+    console.log('📱 매체명 변환 후 샘플:', data.items.slice(0, 5).map((item: any) => ({
       id: item.id,
-      tenantId: item.tenantId,
-      media: item.media,
-      hasMedia: 'media' in item
+      tenant_id: item.tenant_id,
+      mediaName: item.mediaName,
+      hasMediaName: 'mediaName' in item
     })));
   }
   

@@ -61,25 +61,6 @@ export const ChatTable = forwardRef<
         totalPages: Math.ceil((response.total || 0) / pageSize),
         currentItems: response.items.length
       });
-      
-      // 매체 구분 데이터 디버깅
-      if (response.items.length > 0) {
-        console.log('📱 매체 구분 데이터 샘플:', response.items.slice(0, 3).map(item => ({
-          id: item.id,
-          media: item.media,
-          tenantId: item.tenantId,
-          userId: item.userId,
-          selectedMedia: filters.media,
-          hasMedia: 'media' in item,
-          hasTenantId: 'tenantId' in item
-        })));
-        console.log('📱 백엔드 매핑 정보:', {
-          'all': 'None (모든 tenant_id)',
-          'MTS': 'ibks',
-          'i-One Bank': 'ibk'
-        });
-      }
-      
     } catch (error) {
       console.error('❌ 데이터 로딩 실패:', error);
       setError('데이터 조회에 실패했습니다. 조회 기간을 확인해 주세요.');
@@ -92,17 +73,14 @@ export const ChatTable = forwardRef<
 
   const exportToExcel = useCallback(async () => {
     console.log('🔍 디버깅 정보:', { currentFilters, total, chatData: chatData.length });
-    
     if (!currentFilters) {
       alert('먼저 검색 조건을 설정하고 검색을 실행해주세요.');
       return;
     }
-
     if (total === 0) {
       alert('조회된 데이터가 없습니다. 검색 조건을 확인해주세요.');
       return;
     }
-
     try {
       setIsExporting(true);
       console.log('전체 데이터 다운로드 시작...');
@@ -192,7 +170,7 @@ export const ChatTable = forwardRef<
                 <TableCell>{row.question}</TableCell>
                 <TableCell>
                   <div className="media-badge">
-                    {row.media || '전체'}
+                    {row.mediaName || '전체'}
                   </div>
                 </TableCell>
                 <TableCell>
