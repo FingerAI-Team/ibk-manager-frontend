@@ -40,8 +40,8 @@ export function ChatContent() {
 
   return (
     <div className="chat-content-container">
-      <Card>
-        <CardContent>
+      <Card sx={{ border: 'none', boxShadow: 'none', backgroundColor: 'transparent' }}>
+        <CardContent sx={{ padding: 0 }}>
           <div className="chat-content-header">
             <div className="title-container">
               <Typography variant="h6" className="content-title">대화 내용 조회</Typography>

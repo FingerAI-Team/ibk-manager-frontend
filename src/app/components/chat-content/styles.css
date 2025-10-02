@@ -22,7 +22,6 @@
   flex-wrap: wrap; /* 화면이 좁아지면 줄바꿈 */
   gap: 8px; /* 간격을 더 줄임 */
   align-items: center;
-  border-bottom: 1px solid var(--border-color);
   padding-bottom: var(--spacing-md);
 }
 
