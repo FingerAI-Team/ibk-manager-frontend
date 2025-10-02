@@ -2,7 +2,7 @@
 .chat-content-container {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm); /* gap을 줄여서 페이지네이션을 위쪽으로 */
+  gap: 4px; /* gap을 더 줄여서 테이블과 페이지네이션 간격을 좁힘 */
   width: 100%;
   min-width: 0; /* 반응형을 위한 설정 */
   padding: var(--spacing-lg);  /* 여백 추가 */
