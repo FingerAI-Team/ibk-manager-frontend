@@ -50,7 +50,16 @@ export const ChatTable = forwardRef<
         willSetTotal: response.total || 0 
       });
       
-      setTotal(response.total || 0);
+      // total 값이 0이거나 없으면 첫 번째 페이지를 다시 호출해서 확인
+      let totalValue = response.total;
+      if (!totalValue || totalValue === 0) {
+        console.log('🔄 Total 값이 없어서 첫 페이지를 다시 호출...');
+        const firstPageResponse = await fetchChatList(filters, 0, pageSize);
+        totalValue = firstPageResponse.total;
+        console.log('🔄 첫 페이지 재호출 결과:', { total: totalValue });
+      }
+      
+      setTotal(totalValue || response.items.length);
       setPage(pageNum); // 현재 페이지도 업데이트
       
       // 디버깅을 위한 페이지네이션 정보 출력
