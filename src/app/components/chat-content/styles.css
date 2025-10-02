@@ -13,7 +13,7 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm); /* margin-bottom을 줄여서 테이블을 위로 */
 }
 
 /* 검색 필터 영역 */

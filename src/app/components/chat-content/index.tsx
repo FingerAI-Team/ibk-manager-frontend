@@ -67,7 +67,7 @@ export function ChatContent() {
           `${from}-${to} / 전체 ${count}`
         }
         sx={{
-          marginTop: 1,
+          marginTop: 0.5, /* marginTop을 줄여서 페이지네이션을 위로 */
           padding: 0,
           border: 'none',
           boxShadow: 'none',
