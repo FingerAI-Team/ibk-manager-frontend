@@ -7,6 +7,9 @@ import './styles.css'
 
 export function ChatContent() {
   const [isExporting, setIsExporting] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   
   const tableRef = useRef<{ 
     loadChatData: (filters: SearchFiltersType) => void;
@@ -28,11 +31,36 @@ export function ChatContent() {
     tableRef.current?.exportToExcel();
   };
 
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+    // 테이블에서 페이지 변경 로직 실행
+    if (tableRef.current) {
+      // 현재 필터로 새 페이지 로드
+      // 이 부분은 ChatTable에서 처리
+    }
+  };
+
+  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
+    setPage(0); // 페이지를 첫 페이지로 리셋
+  };
+
   // isExporting 상태를 실시간으로 업데이트
   React.useEffect(() => {
     const interval = setInterval(() => {
       if (tableRef.current) {
         setIsExporting(tableRef.current.isExporting);
+        // 페이지네이션 상태도 업데이트
+        if (tableRef.current.total !== undefined) {
+          setTotal(tableRef.current.total);
+        }
+        if (tableRef.current.page !== undefined) {
+          setPage(tableRef.current.page);
+        }
+        if (tableRef.current.rowsPerPage !== undefined) {
+          setRowsPerPage(tableRef.current.rowsPerPage);
+        }
       }
     }, 100);
     return () => clearInterval(interval);
@@ -56,11 +84,11 @@ export function ChatContent() {
       {/* 페이지네이션을 Card 바깥으로 이동 (박스 없이) */}
       <TablePagination
         component="div"
-        count={tableRef.current?.total || 0}
-        page={tableRef.current?.page || 0}
-        onPageChange={tableRef.current?.handleChangePage || (() => {})}
-        rowsPerPage={tableRef.current?.rowsPerPage || 10}
-        onRowsPerPageChange={tableRef.current?.handleChangeRowsPerPage || (() => {})}
+        count={total}
+        page={page}
+        onPageChange={handleChangePage}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
         labelRowsPerPage="페이지당 행 수:"
         labelDisplayedRows={({ from, to, count }) => 
