@@ -100,7 +100,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                       border: '1px solid rgba(25, 118, 210, 0.2)'
                     }}
                   >
-                    {chat.media || '전체'}
+                    {chat.mediaName || '전체'}
                   </Typography>
                   {/* 종목 여부 */}
                   <Typography 
