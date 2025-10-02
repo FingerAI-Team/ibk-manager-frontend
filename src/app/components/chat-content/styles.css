@@ -122,12 +122,14 @@
   width: 120px !important;
   min-width: 120px !important;
   max-width: 120px !important;
-  text-align: center;
+  text-align: center !important;
+  vertical-align: middle !important;
 }
 
 .stock-badge {
   display: flex;
   align-items: center;
+  justify-content: center; /* 가운데 정렬 추가 */
   gap: var(--spacing-xs);
 }
 
