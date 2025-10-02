@@ -9,7 +9,7 @@ import { exportChatContentToExcel } from '@/utils/excel'
 
 export const ChatTable = forwardRef<
   { 
-    loadChatData: (filters: SearchFilters) => void;
+    loadChatData: (filters: SearchFilters, page?: number, pageSize?: number) => void;
     exportToExcel: () => void;
     isExporting: boolean;
     // 페이지네이션 관련 상태와 함수들
@@ -126,9 +126,8 @@ export const ChatTable = forwardRef<
   }, [currentFilters, total, chatData]);
 
   useImperativeHandle(ref, () => ({
-    loadChatData: (filters: SearchFilters) => {
-      setPage(0); // 새로운 검색시 첫 페이지로
-      loadChatData(filters, 0, rowsPerPage);
+    loadChatData: (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
+      loadChatData(filters, pageNum, pageSize);
     },
     exportToExcel,
     isExporting,

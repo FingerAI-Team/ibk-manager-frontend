@@ -10,9 +10,10 @@ export function ChatContent() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [currentFilters, setCurrentFilters] = useState<SearchFiltersType | null>(null);
   
   const tableRef = useRef<{ 
-    loadChatData: (filters: SearchFiltersType) => void;
+    loadChatData: (filters: SearchFiltersType, page?: number, pageSize?: number) => void;
     exportToExcel: () => void;
     isExporting: boolean;
     // 페이지네이션 관련 상태와 함수들
@@ -24,6 +25,8 @@ export function ChatContent() {
   }>(null);
 
   const handleSearch = (filters: SearchFiltersType) => {
+    setCurrentFilters(filters);
+    setPage(0); // 새 검색 시 첫 페이지로 리셋
     tableRef.current?.loadChatData(filters);
   };
 
@@ -33,10 +36,9 @@ export function ChatContent() {
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
-    // 테이블에서 페이지 변경 로직 실행
-    if (tableRef.current) {
-      // 현재 필터로 새 페이지 로드
-      // 이 부분은 ChatTable에서 처리
+    // 현재 필터로 새 페이지 데이터 로드
+    if (currentFilters && tableRef.current) {
+      tableRef.current.loadChatData(currentFilters, newPage, rowsPerPage);
     }
   };
 
@@ -44,6 +46,10 @@ export function ChatContent() {
     const newRowsPerPage = parseInt(event.target.value, 10);
     setRowsPerPage(newRowsPerPage);
     setPage(0); // 페이지를 첫 페이지로 리셋
+    // 현재 필터로 새 행 수로 데이터 로드
+    if (currentFilters && tableRef.current) {
+      tableRef.current.loadChatData(currentFilters, 0, newRowsPerPage);
+    }
   };
 
   // isExporting 상태를 실시간으로 업데이트
