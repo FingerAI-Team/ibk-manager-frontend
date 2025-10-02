@@ -1,6 +1,4 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress } from "@mui/material"
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
 import { fetchChatList, fetchAllChatData } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
@@ -194,17 +192,7 @@ export const ChatTable = forwardRef<
                 </TableCell>
                 <TableCell>
                   <div className={`stock-badge stock-badge-${row.isStock}`}>
-                    {row.isStock ? (
-                      <>
-                        <CheckCircleIcon fontSize="small" />
-                        <span>종목</span>
-                      </>
-                    ) : (
-                      <>
-                        <CancelIcon fontSize="small" />
-                        <span>일반</span>
-                      </>
-                    )}
+                    {row.isStock ? '종목' : '일반'}
                   </div>
                 </TableCell>
               </TableRow>

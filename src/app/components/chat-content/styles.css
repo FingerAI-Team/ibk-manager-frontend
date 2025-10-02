@@ -2,7 +2,7 @@
 .chat-content-container {
   display: flex;
   flex-direction: column;
-  gap: 4px; /* gap을 더 줄여서 테이블과 페이지네이션 간격을 좁힘 */
+  gap: 2px; /* gap을 더욱 줄여서 간격을 최소화 */
   width: 100%;
   min-width: 0; /* 반응형을 위한 설정 */
   padding: var(--spacing-lg);  /* 여백 추가 */
@@ -131,14 +131,15 @@
   align-items: center;
   justify-content: center; /* 가운데 정렬 추가 */
   gap: var(--spacing-xs);
+  color: #000000 !important; /* 검정색 텍스트로 통일 */
 }
 
 .stock-badge-true {
-  color: var(--ibk-blue);
+  color: #000000 !important; /* 파란색 대신 검정색 */
 }
 
 .stock-badge-false {
-  color: var(--text-secondary);
+  color: #000000 !important; /* 회색 대신 검정색 */
 }
 
 .media-badge {
