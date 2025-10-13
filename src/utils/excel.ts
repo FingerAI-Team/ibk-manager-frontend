@@ -20,7 +20,7 @@ export const exportDailyChartToExcel = (data: any[], startDate: string, endDate:
     '날짜': item.date,
     '대화 수': item.chats,
     '사용자 수': item.users,
-    '매체': item.media || '전체'
+    '매체': media || '전체' // 선택된 매체 값 사용
   }));
   
   const filename = media ? `일별_대화활동_${media}_${startDate}_${endDate}` : `일별_대화활동_${startDate}_${endDate}`;
@@ -32,7 +32,7 @@ export const exportHourlyChartToExcel = (data: any[], dateType: string, startDat
   const excelData = data.map(item => ({
     '시간': `${item.hour}시`,
     '대화 수': item.chats,
-    '매체': item.media || '전체'
+    '매체': media || '전체' // 선택된 매체 값 사용
   }));
   
   let filename = dateType === 'custom' && startDate && endDate 
@@ -52,7 +52,7 @@ export const exportWeekdayChartToExcel = (data: any[], year: number, month: numb
     '요일': item.day,
     '대화 수': item.chats,
     '사용자 수': item.users,
-    '매체': item.media || '전체'
+    '매체': media || '전체' // 선택된 매체 값 사용
   }));
   
   const filename = media ? `요일별_대화활동_${media}_${year}년${month}월` : `요일별_대화활동_${year}년${month}월`;
@@ -66,7 +66,7 @@ export const exportUserRankingToExcel = (data: any[], period: string, displayCou
     '사용자 ID': item.userId,
     '사용자명': item.userName,
     '대화 횟수': item.chats,
-    '매체': item.media || '전체'
+    '매체': media || '전체' // 선택된 매체 값 사용
   }));
   
   let filename = `사용자_랭킹_${period}_TOP${displayCount}`;
