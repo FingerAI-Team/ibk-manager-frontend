@@ -32,9 +32,9 @@ export const ChatDetailTab: React.FC = () => {
       
       console.log('🔄 API 호출: 대화 내역 로드 (페이지:', currentPage + 1, ')');
       
-      // 전체 대화 내역 로드 (2024년 7월 1일부터)
+      // 전체 대화 내역 로드 (임시로 넓은 기간 설정)
       const today = new Date();
-      const startDate = '2024-07-01'; // 서비스 시작일
+      const startDate = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 1년 전
       const endDate = today.toISOString().split('T')[0]; // 오늘
       
       console.log('📅 사용할 기간:', startDate, '~', endDate);
@@ -63,12 +63,6 @@ export const ChatDetailTab: React.FC = () => {
       if (currentPage === 0 && response.items.length > 0) {
         setSelectedChat(response.items[0]);
         console.log('📋 첫 번째 대화 선택:', response.items[0].id);
-        console.log('📅 첫 번째 대화 날짜:', response.items[0].timestamp);
-      }
-      
-      // 데이터가 없을 때 안내 메시지
-      if (response.items.length === 0 && currentPage === 0) {
-        console.log('📭 해당 기간에 대화 내역이 없습니다.');
       }
     } catch (error) {
       console.error('❌ 대화 내역 로드 실패:', error);

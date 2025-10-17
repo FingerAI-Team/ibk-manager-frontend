@@ -58,13 +58,8 @@ export const ChatList: React.FC<ChatListProps> = ({
             <CircularProgress />
           </Box>
         ) : chatList.length === 0 ? (
-          <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '200px', textAlign: 'center', p: 2 }}>
-            <Typography color="text.secondary" variant="body1" sx={{ mb: 1 }}>
-              대화 내역이 없습니다.
-            </Typography>
-            <Typography color="text.secondary" variant="body2">
-              (2024년 7월 1일 ~ 현재)
-            </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+            <Typography color="text.secondary">대화 내역이 없습니다.</Typography>
           </Box>
         ) : (
           chatList.map((chat) => (
