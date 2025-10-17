@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { ChatList } from './chat-list';
 import { ChatDetail } from './chat-detail';
-import { fetchChatList, getEarliestChatDate } from '@/app/api/chat';
+import { fetchChatList } from '@/app/api/chat';
 import type { ChatData } from '@/app/api/chat/types';
 
 export const ChatDetailTab: React.FC = () => {
@@ -32,17 +32,16 @@ export const ChatDetailTab: React.FC = () => {
       
       console.log('🔄 API 호출: 대화 내역 로드 (페이지:', currentPage + 1, ')');
       
-      // 최초 대화 시작일 조회
-      const earliestDate = await getEarliestChatDate();
+      // 전체 대화 내역 로드 (2024년 7월 1일부터)
       const today = new Date();
-      const startDate = earliestDate; // 최초 대화 시작일부터
+      const startDate = '2024-07-01'; // 서비스 시작일
       const endDate = today.toISOString().split('T')[0]; // 오늘
       
       console.log('📅 사용할 기간:', startDate, '~', endDate);
       console.log('📄 페이지:', currentPage, ', 페이지 크기:', pageSize);
       
       const response = await fetchChatList({
-        startDate, // 최초 대화 시작일부터
+        startDate, // 1년 전부터
         endDate,   // 오늘까지
         isStock: 'all',
         userId: '',
@@ -64,6 +63,12 @@ export const ChatDetailTab: React.FC = () => {
       if (currentPage === 0 && response.items.length > 0) {
         setSelectedChat(response.items[0]);
         console.log('📋 첫 번째 대화 선택:', response.items[0].id);
+        console.log('📅 첫 번째 대화 날짜:', response.items[0].timestamp);
+      }
+      
+      // 데이터가 없을 때 안내 메시지
+      if (response.items.length === 0 && currentPage === 0) {
+        console.log('📭 해당 기간에 대화 내역이 없습니다.');
       }
     } catch (error) {
       console.error('❌ 대화 내역 로드 실패:', error);
