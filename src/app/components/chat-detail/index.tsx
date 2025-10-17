@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { ChatList } from './chat-list';
 import { ChatDetail } from './chat-detail';
-import { fetchChatList } from '@/app/api/chat';
+import { fetchChatList, getEarliestChatDate } from '@/app/api/chat';
 import type { ChatData } from '@/app/api/chat/types';
 
 export const ChatDetailTab: React.FC = () => {
@@ -32,16 +32,17 @@ export const ChatDetailTab: React.FC = () => {
       
       console.log('🔄 API 호출: 대화 내역 로드 (페이지:', currentPage + 1, ')');
       
-      // 전체 대화 내역 로드 (2024년 7월 1일부터)
+      // 최초 대화 시작일 조회
+      const earliestDate = await getEarliestChatDate();
       const today = new Date();
-      const startDate = '2024-07-01'; // 2024년 7월 1일부터
+      const startDate = earliestDate; // 최초 대화 시작일부터
       const endDate = today.toISOString().split('T')[0]; // 오늘
       
       console.log('📅 사용할 기간:', startDate, '~', endDate);
       console.log('📄 페이지:', currentPage, ', 페이지 크기:', pageSize);
       
       const response = await fetchChatList({
-        startDate, // 2024년 7월 1일부터
+        startDate, // 최초 대화 시작일부터
         endDate,   // 오늘까지
         isStock: 'all',
         userId: '',
