@@ -1,7 +1,7 @@
 import { DateSelector } from './date-selector'
 import { ChatCount } from './chat-count'
 import { UserCount } from './user-count'
-import { ClickRatio } from './click-ratio'
+import { MediaRatio } from './media-ratio'
 import { PredictionCount } from './prediction-count'
 import { useState, useEffect } from 'react'
 import dayjs from 'dayjs'
@@ -22,9 +22,9 @@ export function HomeStats() {
     chatCountDiff: 0,
     userCount: 0,
     userCountDiff: 0,
-    clickRatio: {
-      click: { count: 0, ratio: 0 },
-      nonClick: { count: 0, ratio: 0 }
+    mediaRatio: {
+      mts: { count: 0, ratio: 0 },
+      iOneBank: { count: 0, ratio: 0 }
     },
     predictionStats: {
       correct: 0,
@@ -41,7 +41,17 @@ export function HomeStats() {
         const response = await homeApi.getDailyStats({
           date: selectedDate.format('YYYY-MM-DD')
         })
-        setStats(response)
+        
+        // 백엔드가 아직 clickRatio를 반환하는 경우 임시 변환
+        const convertedStats = {
+          ...response,
+          mediaRatio: response.mediaRatio || {
+            mts: { count: 0, ratio: 0 },
+            iOneBank: { count: 0, ratio: 0 }
+          }
+        }
+        
+        setStats(convertedStats)
       } catch (err) {
         if (axios.isAxiosError(err)) {
           setError(
@@ -80,9 +90,9 @@ export function HomeStats() {
           diffPercent={stats?.userCountDiff ?? defaultStats.userCountDiff}
           loading={loading}
         />
-        <ClickRatio 
+        <MediaRatio 
           selectedDate={selectedDate}
-          clickRatio={stats?.clickRatio ?? defaultStats.clickRatio}
+          mediaStats={stats?.mediaRatio ?? defaultStats.mediaRatio}
           loading={loading}
         />
         <PredictionCount 

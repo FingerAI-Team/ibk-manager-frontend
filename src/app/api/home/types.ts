@@ -11,9 +11,9 @@ export interface DailyStats {
   chatCountDiff: number;  // 전일 대비 증감률
   userCount: number;
   userCountDiff: number;
-  clickRatio: {
-    click: { count: number; ratio: number; };
-    nonClick: { count: number; ratio: number; };
+  mediaRatio: {
+    mts: { count: number; ratio: number; };
+    iOneBank: { count: number; ratio: number; };
   };
   predictionStats: {
     correct: number;
