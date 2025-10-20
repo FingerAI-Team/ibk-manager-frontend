@@ -24,13 +24,13 @@ export function PredictionCount({ selectedDate, predictionStats, loading = false
   
   const chartData: ChartDataItem[] = [
     { 
-      name: '정답', 
+      name: '종목', 
       value: predictionStats?.accuracy ?? 0, 
       count: predictionStats?.correct ?? 0,
       color: '#2E7D32'
     },
     { 
-      name: '오답', 
+      name: '종목 X', 
       value: 100 - (predictionStats?.accuracy ?? 0), 
       count: predictionStats?.incorrect ?? 0,
       color: '#D32F2F'
