@@ -36,14 +36,21 @@ export const ChatList: React.FC<ChatListProps> = ({
   loadedPages
 }) => {
   const formatDate = (timestamp: string) => {
+    console.log('🔍 원본 timestamp:', timestamp);
     const date = new Date(timestamp);
-    return date.toLocaleString('ko-KR', {
+    console.log('📅 변환된 Date 객체:', date);
+    console.log('📅 Date 유효성:', !isNaN(date.getTime()));
+    
+    const formatted = date.toLocaleString('ko-KR', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit'
     });
+    console.log('📅 최종 포맷된 날짜:', formatted);
+    
+    return formatted;
   };
 
   const truncateText = (text: string, maxLength: number = 50) => {

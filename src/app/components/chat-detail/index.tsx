@@ -44,12 +44,15 @@ export const ChatDetailTab: React.FC = () => {
         startDate, // 1년 전부터
         endDate,   // 오늘까지
         isStock: 'all',
+        media: 'all',
         userId: '',
         keyword: ''
       }, currentPage, pageSize); // 현재 페이지, 10개씩
       
       console.log('✅ API 응답:', response.items.length, '개 대화 내역 로드됨');
       console.log('📊 전체 개수:', response.total);
+      console.log('🔍 첫 번째 대화 데이터:', response.items[0]);
+      console.log('🔍 첫 번째 대화 timestamp:', response.items[0]?.timestamp);
       
       setChatList(response.items);
       setTotalCount(response.total);
@@ -78,6 +81,8 @@ export const ChatDetailTab: React.FC = () => {
     if (loadedPages.has(page) && pageCache.has(page)) {
       console.log('💾 캐시된 데이터 사용 (페이지:', page + 1, ')');
       const cachedData = pageCache.get(page)!;
+      console.log('🔍 캐시된 데이터:', cachedData);
+      console.log('🔍 캐시된 첫 번째 대화 timestamp:', cachedData[0]?.timestamp);
       setChatList(cachedData);
       
       // 첫 번째 항목 자동 선택
@@ -106,9 +111,13 @@ export const ChatDetailTab: React.FC = () => {
         startDate,
         endDate,
         isStock: 'all',
+        media: 'all',
         userId: '',
         keyword: ''
       }, page, pageSize);
+      
+      console.log('🔍 페이지', page + 1, 'API 응답 데이터:', response.items);
+      console.log('🔍 첫 번째 대화 timestamp:', response.items[0]?.timestamp);
       
       setChatList(response.items);
       
