@@ -117,6 +117,18 @@
   min-height: 200px;
 }
 
+/* 예측 결과 비율 차트 스타일 */
+.prediction-ratio-chart {
+  height: 200px !important;
+  width: 100% !important;
+  margin: 1rem auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
 /* 날짜 선택기 스타일 */
 .date-picker {
   min-width: 200px;
