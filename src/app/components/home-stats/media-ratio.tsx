@@ -55,53 +55,24 @@ export function MediaRatio({ selectedDate, mediaStats, loading = false }: MediaR
     const data = chartData[index];
     if (!data) return null;
 
-    // 내부 레이블 위치
+    // 내부에 비율만 표시
     const innerRadius2 = innerRadius + (outerRadius - innerRadius) * 0.5;
     const innerX = cx + innerRadius2 * Math.cos(-midAngle * RADIAN);
     const innerY = cy + innerRadius2 * Math.sin(-midAngle * RADIAN);
 
-    // 외부 레이블 위치
-    const radius = 85;
-    const direction = index === 0 ? -1 : 1;
-    const outerX = cx + (direction * radius);
-    const outerY = cy;
-
     return (
       <g key={`label-${index}`}>
-        {/* 내부 비율 표시 */}
+        {/* 내부 비율만 표시 */}
         <text 
           x={innerX} 
           y={innerY} 
           textAnchor="middle" 
           dominantBaseline="central"
-          fontSize="12"
+          fontSize="14"
           fontWeight="bold"
           fill="white"
         >
           {`${data.value.toFixed(1)}%`}
-        </text>
-        
-        {/* 외부 매체명과 개수 표시 */}
-        <text 
-          x={outerX} 
-          y={outerY - 10} 
-          textAnchor="middle" 
-          dominantBaseline="central"
-          fontSize="11"
-          fontWeight="bold"
-          fill="#333"
-        >
-          {data.name}
-        </text>
-        <text 
-          x={outerX} 
-          y={outerY + 10} 
-          textAnchor="middle" 
-          dominantBaseline="central"
-          fontSize="10"
-          fill="#666"
-        >
-          {`${data.count}건`}
         </text>
       </g>
     );
@@ -111,32 +82,51 @@ export function MediaRatio({ selectedDate, mediaStats, loading = false }: MediaR
     const { payload } = props;
     
     return (
-      <ul style={{ 
-        listStyle: 'none', 
-        padding: 0, 
-        margin: 0, 
+      <div style={{ 
         display: 'flex', 
         justifyContent: 'center', 
-        gap: '20px',
-        marginTop: '10px'
+        gap: '30px',
+        marginTop: '15px'
       }}>
-        {payload?.map((entry: any, index: number) => (
-          <li key={`legend-${index}`} style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '5px',
-            fontSize: '12px'
-          }}>
-            <div style={{ 
-              width: '12px', 
-              height: '12px', 
-              backgroundColor: entry.color,
-              borderRadius: '2px'
-            }} />
-            <span style={{ fontWeight: 'bold' }}>{entry.value}</span>
-          </li>
-        ))}
-      </ul>
+        {payload?.map((entry: any, index: number) => {
+          const data = chartData[index];
+          return (
+            <div key={`legend-${index}`} style={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '5px'
+            }}>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px'
+              }}>
+                <div style={{ 
+                  width: '14px', 
+                  height: '14px', 
+                  backgroundColor: entry.color,
+                  borderRadius: '3px'
+                }} />
+                <span style={{ 
+                  fontWeight: 'bold', 
+                  fontSize: '14px',
+                  color: '#333'
+                }}>
+                  {entry.value}
+                </span>
+              </div>
+              <span style={{ 
+                fontSize: '12px',
+                color: '#666',
+                fontWeight: '500'
+              }}>
+                {data?.count}건
+              </span>
+            </div>
+          );
+        })}
+      </div>
     );
   };
 
