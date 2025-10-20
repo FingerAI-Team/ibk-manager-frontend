@@ -68,7 +68,7 @@ export function MediaRatio({ selectedDate, mediaStats, loading = false }: MediaR
           y={innerY} 
           textAnchor="middle" 
           dominantBaseline="central"
-          fontSize="14"
+          fontSize="11"
           fontWeight="bold"
           fill="white"
         >
@@ -171,6 +171,7 @@ export function MediaRatio({ selectedDate, mediaStats, loading = false }: MediaR
                   paddingAngle={2}
                   dataKey="value"
                   label={renderCustomizedLabel}
+                  labelLine={false}
                 >
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
