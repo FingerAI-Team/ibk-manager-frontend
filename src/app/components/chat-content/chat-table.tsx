@@ -263,7 +263,12 @@ export const ChatTable = forwardRef<
               X
             </Button>
         </DialogTitle>
-        <DialogContent sx={{ padding: '0px 16px 16px 16px' }}>
+        <DialogContent sx={{ 
+          padding: '0px 16px 16px 16px !important',
+          '&.MuiDialogContent-root': { 
+            padding: '0px 16px 16px 16px !important' 
+          }
+        }}>
           <Typography variant="body1" sx={{ 
             fontFamily: 'monospace',
             fontSize: '0.9rem',
@@ -271,7 +276,9 @@ export const ChatTable = forwardRef<
             backgroundColor: '#f5f5f5',
             padding: '12px',
             borderRadius: '4px',
-            border: '1px solid #e0e0e0'
+            border: '1px solid #e0e0e0',
+            margin: '0px !important',
+            marginTop: '0px !important'
           }}>
             {userIdDialog.userId}
           </Typography>
