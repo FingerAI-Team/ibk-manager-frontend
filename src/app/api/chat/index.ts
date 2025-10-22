@@ -140,47 +140,120 @@ export async function fetchChatList(
   return data;
 }
 
-// 전체 데이터를 조회하는 함수 (엑셀 다운로드용)
+// 전체 데이터를 조회하는 함수 (엑셀 다운로드용) - 병렬 처리 최적화
 export async function fetchAllChatData(filters: SearchFilters, totalCount: number): Promise<ChatData[]> {
   console.log(`🔄 전체 데이터 조회 시작... (총 ${totalCount}개 예상)`);
   
-  const allData: ChatData[] = [];
-  let page = 0;
   const pageSize = 100; // 백엔드 제한: 최대 100개
   const maxPages = Math.min(Math.ceil(totalCount / pageSize), 100); // 최대 100페이지 (10,000개)
   
   if (totalCount > 10000) {
     console.warn(`⚠️ 데이터가 10,000개를 초과합니다. 최대 10,000개까지만 다운로드됩니다.`);
   }
+
+  // 병렬 처리를 위한 청크 단위로 나누기 (한 번에 5개 페이지씩 처리)
+  const chunkSize = 5;
+  const allData: ChatData[] = [];
   
-  for (let i = 0; i < maxPages; i++) {
+  for (let chunkStart = 0; chunkStart < maxPages; chunkStart += chunkSize) {
+    const chunkEnd = Math.min(chunkStart + chunkSize, maxPages);
+    const chunkPages = Array.from({ length: chunkEnd - chunkStart }, (_, i) => chunkStart + i);
+    
+    console.log(`📄 청크 ${Math.floor(chunkStart / chunkSize) + 1} 처리 중... (페이지 ${chunkStart + 1}-${chunkEnd})`);
+    
     try {
-      console.log(`📄 페이지 ${page + 1}/${maxPages} 조회 중...`);
+      // 병렬로 여러 페이지를 동시에 요청
+      const chunkPromises = chunkPages.map(page => 
+        fetchChatList(filters, page, pageSize).catch(error => {
+          console.error(`❌ 페이지 ${page + 1} 조회 실패:`, error);
+          return { items: [], total: 0 };
+        })
+      );
       
-      const response = await fetchChatList(filters, page, pageSize);
+      const chunkResponses = await Promise.all(chunkPromises);
       
-      if (response.items.length === 0) {
-        console.log('📄 더 이상 데이터가 없습니다.');
-        break;
+      // 응답 데이터를 합치기
+      for (const response of chunkResponses) {
+        if (response.items.length > 0) {
+          allData.push(...response.items);
+        }
       }
       
-      allData.push(...response.items);
-      console.log(`✅ 페이지 ${page + 1}: ${response.items.length}개 데이터 추가 (총 ${allData.length}개)`);
+      console.log(`✅ 청크 완료: ${allData.length}개 데이터 누적`);
       
-      // 마지막 페이지인지 확인
-      if (response.items.length < pageSize || allData.length >= totalCount) {
+      // 데이터가 부족하면 중단
+      if (chunkResponses.some(response => response.items.length < pageSize)) {
         console.log('📄 마지막 페이지에 도달했습니다.');
         break;
       }
       
-      page++;
-      
     } catch (error) {
-      console.error(`❌ 페이지 ${page + 1} 조회 실패:`, error);
+      console.error(`❌ 청크 처리 실패:`, error);
       throw error;
     }
   }
   
+  console.log(`🎉 전체 데이터 조회 완료: ${allData.length}개`);
+  return allData;
+}
+
+// 진행률 콜백을 지원하는 전체 데이터 조회 함수
+export async function fetchAllChatDataWithProgress(
+  filters: SearchFilters, 
+  totalCount: number, 
+  onProgress: (current: number, total: number, message: string) => void
+): Promise<ChatData[]> {
+  console.log(`🔄 전체 데이터 조회 시작... (총 ${totalCount}개 예상)`);
+  
+  const pageSize = 100;
+  const maxPages = Math.min(Math.ceil(totalCount / pageSize), 100);
+  
+  if (totalCount > 10000) {
+    console.warn(`⚠️ 데이터가 10,000개를 초과합니다. 최대 10,000개까지만 다운로드됩니다.`);
+  }
+
+  const chunkSize = 5;
+  const allData: ChatData[] = [];
+  
+  for (let chunkStart = 0; chunkStart < maxPages; chunkStart += chunkSize) {
+    const chunkEnd = Math.min(chunkStart + chunkSize, maxPages);
+    const chunkPages = Array.from({ length: chunkEnd - chunkStart }, (_, i) => chunkStart + i);
+    
+    const progress = Math.min((chunkStart / maxPages) * 100, 100);
+    onProgress(Math.floor(progress), 100, `데이터 조회 중... (${allData.length}/${totalCount})`);
+    
+    console.log(`📄 청크 ${Math.floor(chunkStart / chunkSize) + 1} 처리 중... (페이지 ${chunkStart + 1}-${chunkEnd})`);
+    
+    try {
+      const chunkPromises = chunkPages.map(page => 
+        fetchChatList(filters, page, pageSize).catch(error => {
+          console.error(`❌ 페이지 ${page + 1} 조회 실패:`, error);
+          return { items: [], total: 0 };
+        })
+      );
+      
+      const chunkResponses = await Promise.all(chunkPromises);
+      
+      for (const response of chunkResponses) {
+        if (response.items.length > 0) {
+          allData.push(...response.items);
+        }
+      }
+      
+      console.log(`✅ 청크 완료: ${allData.length}개 데이터 누적`);
+      
+      if (chunkResponses.some(response => response.items.length < pageSize)) {
+        console.log('📄 마지막 페이지에 도달했습니다.');
+        break;
+      }
+      
+    } catch (error) {
+      console.error(`❌ 청크 처리 실패:`, error);
+      throw error;
+    }
+  }
+  
+  onProgress(100, 100, '데이터 조회 완료');
   console.log(`🎉 전체 데이터 조회 완료: ${allData.length}개`);
   return allData;
 }

@@ -1,6 +1,6 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, LinearProgress } from "@mui/material"
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
-import { fetchChatList, fetchAllChatData } from '@/app/api/chat'
+import { fetchChatList, fetchAllChatData, fetchAllChatDataWithProgress } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
 import type { ChatData } from '@/app/api/chat/types'
 import { exportChatContentToExcel } from '@/utils/excel'
@@ -27,6 +27,7 @@ export const ChatTable = forwardRef<
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [exportProgress, setExportProgress] = useState({ current: 0, total: 0, message: '' });
   const [userIdDialog, setUserIdDialog] = useState<{ open: boolean; userId: string }>({ open: false, userId: '' });
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
@@ -102,16 +103,21 @@ export const ChatTable = forwardRef<
     }
     try {
       setIsExporting(true);
+      setExportProgress({ current: 0, total: total, message: '데이터 조회 중...' });
       console.log('전체 데이터 다운로드 시작...');
       
-      // 전체 데이터 조회
-      const allData = await fetchAllChatData(currentFilters, total);
+      // 전체 데이터 조회 (진행률 콜백 추가)
+      const allData = await fetchAllChatDataWithProgress(currentFilters, total, (current, total, message) => {
+        setExportProgress({ current, total, message });
+      });
       console.log(`전체 데이터 ${allData.length}건 조회 완료`);
       
       if (allData.length === 0) {
         alert('다운로드할 데이터가 없습니다.');
         return;
       }
+      
+      setExportProgress({ current: total, total: total, message: '엑셀 파일 생성 중...' });
       
       // 엑셀 다운로드
       exportChatContentToExcel(allData, currentFilters);
@@ -122,6 +128,7 @@ export const ChatTable = forwardRef<
       alert('❌ 데이터 다운로드에 실패했습니다. 네트워크 연결을 확인하고 다시 시도해주세요.');
     } finally {
       setIsExporting(false);
+      setExportProgress({ current: 0, total: 0, message: '' });
     }
   }, [currentFilters, total, chatData]);
 
@@ -282,6 +289,41 @@ export const ChatTable = forwardRef<
           }}>
             {userIdDialog.userId}
           </Typography>
+        </DialogContent>
+      </Dialog>
+      
+      {/* 다운로드 진행률 다이얼로그 */}
+      <Dialog 
+        open={isExporting} 
+        maxWidth="sm"
+        fullWidth
+        disableEscapeKeyDown
+        sx={{
+          '& .MuiDialog-paper': {
+            padding: '8px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          padding: '16px 16px 8px 16px',
+          textAlign: 'center'
+        }}>
+          데이터 다운로드 중...
+        </DialogTitle>
+        <DialogContent sx={{ padding: '8px 16px 16px 16px' }}>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>
+              {exportProgress.message}
+            </Typography>
+            <LinearProgress 
+              variant="determinate" 
+              value={(exportProgress.current / exportProgress.total) * 100} 
+              sx={{ mb: 1 }}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', display: 'block' }}>
+              {exportProgress.current} / {exportProgress.total} ({Math.round((exportProgress.current / exportProgress.total) * 100)}%)
+            </Typography>
+          </Box>
         </DialogContent>
       </Dialog>
     </TableContainer>
