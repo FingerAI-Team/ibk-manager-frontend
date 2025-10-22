@@ -87,6 +87,7 @@ export const exportChatContentToExcel = (data: any[], filters: any) => {
     '사용자 ID': item.userId,
     '질문 내용': item.question,
     '답변 내용': item.answer || '답변 내용 없음',
+    '매체 구분': item.tenant_id === 'ibks' ? 'MTS' : item.tenant_id === 'ibk' ? 'i-One Bank' : '전체',
     '종목 여부': item.isStock ? '종목' : '일반'
   }));
   
