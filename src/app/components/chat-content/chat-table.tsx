@@ -259,11 +259,11 @@ export const ChatTable = forwardRef<
                 color: '#333'
               }
             }}
-          >
-            ×
-          </Button>
+            >
+              X
+            </Button>
         </DialogTitle>
-        <DialogContent sx={{ padding: '8px 16px 16px 16px' }}>
+        <DialogContent sx={{ padding: '0px 16px 16px 16px' }}>
           <Typography variant="body1" sx={{ 
             fontFamily: 'monospace',
             fontSize: '0.9rem',
