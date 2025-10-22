@@ -29,87 +29,141 @@ export const ChatTable = forwardRef<
   const [isExporting, setIsExporting] = useState(false);
   const [exportProgress, setExportProgress] = useState({ current: 0, total: 0, message: '' });
   const [userIdDialog, setUserIdDialog] = useState<{ open: boolean; userId: string }>({ open: false, userId: '' });
+  
+  // 데이터 캐싱을 위한 상태
+  const [cachedData, setCachedData] = useState<ChatData[]>([]);
+  const [isDataCached, setIsDataCached] = useState(false);
+  const [cacheKey, setCacheKey] = useState<string>('');
+
+  // 캐시 키 생성 함수
+  const generateCacheKey = (filters: SearchFilters): string => {
+    return JSON.stringify({
+      startDate: filters.startDate,
+      endDate: filters.endDate,
+      isStock: filters.isStock,
+      media: filters.media,
+      userId: filters.userId,
+      keyword: filters.keyword
+    });
+  };
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
       setLoading(true);
       setError(null);
       setCurrentFilters(filters);
-      setRowsPerPage(pageSize); // 페이지 크기 상태 업데이트
-      console.log('🔄 데이터 로딩 시작:', { pageNum, pageSize, filters, currentRowsPerPage: rowsPerPage });
+      setRowsPerPage(pageSize);
       
-      const response = await fetchChatList(filters, pageNum, pageSize);
-      console.log('✅ 데이터 로딩 완료:', { items: response.items.length, total: response.total });
+      const newCacheKey = generateCacheKey(filters);
+      console.log('🔄 데이터 로딩 시작:', { pageNum, pageSize, filters, cacheKey: newCacheKey, isDataCached });
       
-      // 상태 업데이트를 즉시 처리 (setTimeout 제거)
-      setChatData(response.items);
-      
-      // total 값 설정 전후 로깅
-      console.log('🔢 Total 값 설정 전:', { 
-        receivedTotal: response.total, 
-        totalType: typeof response.total,
-        willSetTotal: response.total || 0 
-      });
-      
-      // total 값이 0이거나 없으면 첫 번째 페이지를 다시 호출해서 확인
-      let totalValue = response.total;
-      if (!totalValue || totalValue === 0) {
-        console.log('🔄 Total 값이 없어서 첫 페이지를 다시 호출...');
-        const firstPageResponse = await fetchChatList(filters, 0, pageSize);
-        totalValue = firstPageResponse.total;
-        console.log('🔄 첫 페이지 재호출 결과:', { total: totalValue });
+      // 캐시된 데이터가 있고 같은 필터인 경우
+      if (isDataCached && cacheKey === newCacheKey) {
+        console.log('💾 캐시된 데이터 사용');
+        const startIndex = pageNum * pageSize;
+        const endIndex = startIndex + pageSize;
+        const pageData = cachedData.slice(startIndex, endIndex);
+        
+        setChatData(pageData);
+        setTotal(cachedData.length);
+        setPage(pageNum);
+        setLoading(false);
+        return;
       }
       
-      const finalTotal = totalValue || response.items.length;
-      setTotal(finalTotal);
-      setPage(pageNum); // 현재 페이지도 업데이트
+      // 캐시된 데이터가 없거나 다른 필터인 경우 - 전체 데이터 로드
+      console.log('🔄 전체 데이터 로드 시작...');
+      setExportProgress({ current: 0, total: 100, message: '전체 데이터 로드 중...' });
       
-      console.log('🎯 최종 Total 설정:', {
-        finalTotal,
-        totalValue,
-        itemsLength: response.items.length,
-        willSetTotal: finalTotal
+      // 먼저 총 개수 확인
+      const firstPageResponse = await fetchChatList(filters, 0, 1);
+      const totalCount = firstPageResponse.total;
+      
+      if (totalCount === 0) {
+        setChatData([]);
+        setTotal(0);
+        setCachedData([]);
+        setIsDataCached(false);
+        setLoading(false);
+        return;
+      }
+      
+      // 전체 데이터 로드
+      const allData = await fetchAllChatDataWithProgress(filters, totalCount, (current, total, message) => {
+        setExportProgress({ current, total, message });
       });
       
-      // 디버깅을 위한 페이지네이션 정보 출력
-      console.log('📊 페이지네이션 정보:', {
-        currentPage: pageNum,
-        totalItems: totalValue,
-        finalTotalValue: totalValue,
-        itemsPerPage: pageSize,
-        totalPages: Math.ceil((totalValue || 0) / pageSize),
-        currentItems: response.items.length,
-        willSetTotal: totalValue || response.items.length
+      // 캐시에 저장
+      setCachedData(allData);
+      setIsDataCached(true);
+      setCacheKey(newCacheKey);
+      
+      // 현재 페이지 데이터 표시
+      const startIndex = pageNum * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = allData.slice(startIndex, endIndex);
+      
+      setChatData(pageData);
+      setTotal(allData.length);
+      setPage(pageNum);
+      
+      console.log('✅ 전체 데이터 로드 완료:', { 
+        totalLoaded: allData.length, 
+        currentPageData: pageData.length,
+        pageNum,
+        pageSize 
       });
+      
     } catch (error) {
       console.error('❌ 데이터 로딩 실패:', error);
-      setError('데이터 조회에 실패했습니다. 조회 기간을 확인해 주세요.');
+      setError(error instanceof Error ? error.message : '데이터를 불러오는데 실패했습니다.');
       setChatData([]);
       setTotal(0);
+      setCachedData([]);
+      setIsDataCached(false);
     } finally {
       setLoading(false);
+      setExportProgress({ current: 0, total: 0, message: '' });
     }
-  }, []);
+  }, [isDataCached, cacheKey, cachedData]);
 
   const exportToExcel = useCallback(async () => {
-    console.log('🔍 디버깅 정보:', { currentFilters, total, chatData: chatData.length });
+    console.log('🔍 디버깅 정보:', { currentFilters, total, chatData: chatData.length, isDataCached, cachedDataLength: cachedData.length });
+    
     if (!currentFilters) {
       alert('먼저 검색 조건을 설정하고 검색을 실행해주세요.');
       return;
     }
+    
     if (total === 0) {
       alert('조회된 데이터가 없습니다. 검색 조건을 확인해주세요.');
       return;
     }
+    
     try {
       setIsExporting(true);
-      setExportProgress({ current: 0, total: total, message: '데이터 조회 중...' });
-      console.log('전체 데이터 다운로드 시작...');
       
-      // 전체 데이터 조회 (진행률 콜백 추가)
+      // 캐시된 데이터가 있으면 바로 사용
+      if (isDataCached && cachedData.length > 0) {
+        console.log('💾 캐시된 데이터로 엑셀 다운로드');
+        setExportProgress({ current: 100, total: 100, message: '엑셀 파일 생성 중...' });
+        
+        exportChatContentToExcel(cachedData, currentFilters);
+        alert(`✅ 캐시된 ${cachedData.length}건의 데이터가 다운로드되었습니다!`);
+        
+        setIsExporting(false);
+        setExportProgress({ current: 0, total: 0, message: '' });
+        return;
+      }
+      
+      // 캐시된 데이터가 없으면 전체 데이터 로드
+      console.log('🔄 캐시된 데이터가 없어서 전체 데이터 로드 후 다운로드');
+      setExportProgress({ current: 0, total: total, message: '데이터 조회 중...' });
+      
       const allData = await fetchAllChatDataWithProgress(currentFilters, total, (current, total, message) => {
         setExportProgress({ current, total, message });
       });
+      
       console.log(`전체 데이터 ${allData.length}건 조회 완료`);
       
       if (allData.length === 0) {
@@ -124,13 +178,13 @@ export const ChatTable = forwardRef<
       alert(`✅ 전체 ${allData.length}건의 데이터가 다운로드되었습니다!`);
       
     } catch (error) {
-      console.error('전체 데이터 다운로드 실패:', error);
+      console.error('데이터 다운로드 실패:', error);
       alert('❌ 데이터 다운로드에 실패했습니다. 네트워크 연결을 확인하고 다시 시도해주세요.');
     } finally {
       setIsExporting(false);
       setExportProgress({ current: 0, total: 0, message: '' });
     }
-  }, [currentFilters, total, chatData]);
+  }, [currentFilters, total, isDataCached, cachedData]);
 
   useImperativeHandle(ref, () => ({
     loadChatData: (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
@@ -149,6 +203,20 @@ export const ChatTable = forwardRef<
   const handleChangePage = (event: unknown, newPage: number) => {
     if (!currentFilters) return;
     console.log('📄 페이지 변경:', newPage);
+    
+    // 캐시된 데이터가 있으면 바로 사용
+    if (isDataCached && cachedData.length > 0) {
+      console.log('💾 캐시된 데이터로 페이지 변경');
+      const startIndex = newPage * rowsPerPage;
+      const endIndex = startIndex + rowsPerPage;
+      const pageData = cachedData.slice(startIndex, endIndex);
+      
+      setChatData(pageData);
+      setPage(newPage);
+      return;
+    }
+    
+    // 캐시된 데이터가 없으면 API 호출
     setPage(newPage);
     loadChatData(currentFilters, newPage, rowsPerPage);
   };
