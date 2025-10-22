@@ -82,11 +82,21 @@ export const exportUserRankingToExcel = (data: any[], period: string, displayCou
 
 // 대화 내용 데이터를 엑셀로 변환
 export const exportChatContentToExcel = (data: any[], filters: any) => {
+  // tenant_id를 매체명으로 변환하는 함수
+  const getMediaName = (tenantId: string) => {
+    const mapping: { [key: string]: string } = {
+      'ibks': 'MTS',
+      'ibk': 'i-One Bank'
+    };
+    return mapping[tenantId] || '전체';
+  };
+
   const excelData = data.map((item) => ({
     '일시': item.timestamp,
     '사용자 ID': item.userId,
     '질문 내용': item.question,
     '답변 내용': item.answer || '답변 내용 없음',
+    '매체 구분': getMediaName(item.tenant_id),
     '종목 여부': item.isStock ? '종목' : '일반'
   }));
   
