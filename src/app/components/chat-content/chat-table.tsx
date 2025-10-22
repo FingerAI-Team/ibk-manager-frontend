@@ -233,32 +233,49 @@ export const ChatTable = forwardRef<
         onClose={handleCloseDialog}
         maxWidth="sm"
         fullWidth
+        sx={{
+          '& .MuiDialog-paper': {
+            padding: '8px'
+          }
+        }}
       >
-        <DialogTitle>전체 사용자 ID</DialogTitle>
-        <DialogContent>
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body1" sx={{ 
-              fontFamily: 'monospace',
-              fontSize: '0.9rem',
-              wordBreak: 'break-all',
-              backgroundColor: '#f5f5f5',
-              padding: '12px',
-              borderRadius: '4px',
-              border: '1px solid #e0e0e0'
-            }}>
-              {userIdDialog.userId}
-            </Typography>
-          </Box>
-        </DialogContent>
-        <DialogActions>
+        <DialogTitle sx={{ 
+          padding: '16px 16px 8px 16px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          전체 사용자 ID
           <Button 
             onClick={handleCloseDialog}
-            variant="contained"
-            color="primary"
+            sx={{ 
+              minWidth: 'auto',
+              padding: '4px',
+              fontSize: '18px',
+              fontWeight: 'bold',
+              color: '#666',
+              '&:hover': {
+                backgroundColor: '#f5f5f5',
+                color: '#333'
+              }
+            }}
           >
-            닫기
+            ×
           </Button>
-        </DialogActions>
+        </DialogTitle>
+        <DialogContent sx={{ padding: '8px 16px 16px 16px' }}>
+          <Typography variant="body1" sx={{ 
+            fontFamily: 'monospace',
+            fontSize: '0.9rem',
+            wordBreak: 'break-all',
+            backgroundColor: '#f5f5f5',
+            padding: '12px',
+            borderRadius: '4px',
+            border: '1px solid #e0e0e0'
+          }}>
+            {userIdDialog.userId}
+          </Typography>
+        </DialogContent>
       </Dialog>
     </TableContainer>
   );
