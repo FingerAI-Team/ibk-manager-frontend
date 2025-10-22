@@ -1,6 +1,6 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, LinearProgress } from "@mui/material"
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
-import { fetchChatList, fetchAllChatData, fetchAllChatDataForDownload } from '@/app/api/chat'
+import { fetchChatList, fetchAllChatData, fetchAllChatDataForDownload, downloadChatDataStream } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
 import type { ChatData } from '@/app/api/chat/types'
 import { exportChatContentToExcel } from '@/utils/excel'
@@ -28,6 +28,7 @@ export const ChatTable = forwardRef<
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [userIdDialog, setUserIdDialog] = useState<{ open: boolean; userId: string }>({ open: false, userId: '' });
+  const [downloadProgress, setDownloadProgress] = useState({ current: 0, total: 100, message: '' });
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
@@ -102,26 +103,62 @@ export const ChatTable = forwardRef<
     }
     try {
       setIsExporting(true);
-      console.log('전체 데이터 다운로드 시작...');
+      setDownloadProgress({ current: 0, total: 100, message: '데이터 조회 중...' });
+      console.log('🚀 스트리밍 다운로드 시작...');
       
-      // 백엔드에서 이미 필터링된 전체 데이터를 한 번에 다운로드
-      const allData = await fetchAllChatDataForDownload(currentFilters);
-      console.log(`✅ 백엔드에서 필터링된 데이터 ${allData.length}건 수신 완료`);
+      let allData: ChatData[] = [];
       
-      if (allData.length === 0) {
-        alert('다운로드할 데이터가 없습니다.');
-        return;
-      }
-      
-      // 엑셀 다운로드
-      exportChatContentToExcel(allData, currentFilters);
-      alert(`✅ 전체 ${allData.length}건의 데이터가 다운로드되었습니다!`);
+      // 스트리밍 다운로드 시작
+      const eventSource = downloadChatDataStream(
+        currentFilters,
+        // 진행률 업데이트 콜백
+        (progress, processed, total) => {
+          setDownloadProgress({ 
+            current: Math.round(progress), 
+            total: 100, 
+            message: `데이터 수신 중... (${processed}/${total})` 
+          });
+        },
+        // 데이터 청크 수신 콜백
+        (chunkData) => {
+          allData = [...allData, ...chunkData];
+        },
+        // 완료 콜백
+        (completeData) => {
+          console.log(`✅ 스트리밍 다운로드 완료! 총 ${completeData.length}건`);
+          
+          if (completeData.length === 0) {
+            alert('다운로드할 데이터가 없습니다.');
+            setIsExporting(false);
+            setDownloadProgress({ current: 0, total: 100, message: '' });
+            return;
+          }
+          
+          // 엑셀 파일 생성
+          setDownloadProgress({ current: 100, total: 100, message: '엑셀 파일 생성 중...' });
+          exportChatContentToExcel(completeData, currentFilters);
+          
+          // 완료 후 잠시 대기 후 다이얼로그 닫기
+          setTimeout(() => {
+            setIsExporting(false);
+            setDownloadProgress({ current: 0, total: 100, message: '' });
+            alert(`✅ 전체 ${completeData.length}건의 데이터가 다운로드되었습니다!`);
+          }, 1000);
+        },
+        // 오류 콜백
+        (errorMessage) => {
+          console.error('❌ 스트리밍 다운로드 오류:', errorMessage);
+          alert(`❌ 데이터 다운로드에 실패했습니다: ${errorMessage}`);
+          setIsExporting(false);
+          setDownloadProgress({ current: 0, total: 100, message: '' });
+        }
+      );
       
     } catch (error) {
-      console.error('백엔드 다운로드 API 실패:', error);
+      console.error('❌ 다운로드 시작 실패:', error);
       alert('❌ 데이터 다운로드에 실패했습니다. 백엔드 API를 확인해주세요.');
-    } finally {
       setIsExporting(false);
+      setDownloadProgress({ current: 0, total: 100, message: '' });
     }
   }, [currentFilters, total, chatData]);
 
@@ -282,6 +319,41 @@ export const ChatTable = forwardRef<
           }}>
             {userIdDialog.userId}
           </Typography>
+        </DialogContent>
+      </Dialog>
+      
+      {/* 다운로드 진행률 다이얼로그 */}
+      <Dialog 
+        open={isExporting} 
+        maxWidth="sm"
+        fullWidth
+        disableEscapeKeyDown
+        sx={{
+          '& .MuiDialog-paper': {
+            padding: '8px'
+          }
+        }}
+      >
+        <DialogTitle sx={{ 
+          padding: '16px 16px 8px 16px',
+          textAlign: 'center'
+        }}>
+          데이터 다운로드 중...
+        </DialogTitle>
+        <DialogContent sx={{ padding: '8px 16px 16px 16px' }}>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2, textAlign: 'center' }}>
+              {downloadProgress.message}
+            </Typography>
+            <LinearProgress 
+              variant="determinate" 
+              value={(downloadProgress.current / downloadProgress.total) * 100} 
+              sx={{ mb: 1 }}
+            />
+            <Typography variant="caption" color="text.secondary" sx={{ textAlign: 'center', display: 'block' }}>
+              {downloadProgress.current} / {downloadProgress.total} ({Math.round((downloadProgress.current / downloadProgress.total) * 100)}%)
+            </Typography>
+          </Box>
         </DialogContent>
       </Dialog>
     </TableContainer>

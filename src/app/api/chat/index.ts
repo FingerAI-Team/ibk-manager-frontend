@@ -226,3 +226,82 @@ export async function fetchAllChatDataForDownload(
   
   return data;
 }
+
+// 스트리밍 다운로드 API (Server-Sent Events 사용)
+export function downloadChatDataStream(
+  filters: SearchFilters,
+  onProgress: (progress: number, processed: number, total: number) => void,
+  onChunk: (data: ChatData[]) => void,
+  onComplete: (allData: ChatData[]) => void,
+  onError: (error: string) => void
+): EventSource {
+  console.log('📥 스트리밍 다운로드 요청:', filters);
+  
+  // 매체 구분을 tenant_id로 매핑
+  const getTenantId = (media: string) => {
+    const mapping: { [key: string]: string | null } = {
+      'all': null,
+      'MTS': 'ibks',
+      'i-One Bank': 'ibk'
+    };
+    return mapping[media] || null;
+  };
+
+  const tenantId = getTenantId(filters.media);
+  
+  const queryParams = new URLSearchParams({
+    startDate: filters.startDate || '',
+    endDate: filters.endDate || '',
+    chunkSize: '50', // 청크 크기 설정
+    ...(filters.isStock !== 'all' && { isStock: filters.isStock }),
+    ...(tenantId !== null && { tenant_id: tenantId }),
+    ...(filters.userId && { userId: filters.userId }),
+    ...(filters.keyword && { keyword: filters.keyword })
+  });
+
+  const fullUrl = `${API_BASE_URL}/chats/download/stream?${queryParams}`;
+  console.log('🔗 스트리밍 다운로드 API URL:', fullUrl);
+
+  const eventSource = new EventSource(fullUrl);
+  let allData: ChatData[] = [];
+
+  eventSource.onmessage = function(event) {
+    try {
+      const data = JSON.parse(event.data);
+      
+      switch(data.type) {
+        case 'chunk':
+          console.log('📦 데이터 청크 수신:', data.data.length, '개');
+          allData = [...allData, ...data.data];
+          onChunk(data.data);
+          break;
+        case 'progress':
+          console.log('📊 진행률 업데이트:', data.progress + '%');
+          onProgress(data.progress, data.processed, data.total);
+          break;
+        case 'complete':
+          console.log('✅ 다운로드 완료! 총', allData.length, '개');
+          onComplete(allData);
+          eventSource.close();
+          break;
+        case 'error':
+          console.error('❌ 오류 발생:', data.message);
+          onError(data.message);
+          eventSource.close();
+          break;
+      }
+    } catch (error) {
+      console.error('❌ 데이터 파싱 오류:', error);
+      onError('데이터 파싱 오류가 발생했습니다.');
+      eventSource.close();
+    }
+  };
+
+  eventSource.onerror = function(event) {
+    console.error('❌ EventSource 오류:', event);
+    onError('연결 오류가 발생했습니다.');
+    eventSource.close();
+  };
+
+  return eventSource;
+}
