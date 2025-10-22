@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box } from "@mui/material"
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
 import { fetchChatList, fetchAllChatData } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
@@ -27,6 +27,7 @@ export const ChatTable = forwardRef<
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [userIdDialog, setUserIdDialog] = useState<{ open: boolean; userId: string }>({ open: false, userId: '' });
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
@@ -154,6 +155,14 @@ export const ChatTable = forwardRef<
     loadChatData(currentFilters, 0, newRowsPerPage);
   };
 
+  const handleUserIdClick = (userId: string) => {
+    setUserIdDialog({ open: true, userId });
+  };
+
+  const handleCloseDialog = () => {
+    setUserIdDialog({ open: false, userId: '' });
+  };
+
   return (
     <TableContainer className="chat-table-container">
       <Table>
@@ -183,7 +192,18 @@ export const ChatTable = forwardRef<
             chatData.map((row, index) => (
               <TableRow key={`${row.id}-${index}`}>
                 <TableCell>{row.timestamp}</TableCell>
-                <TableCell>{row.userId}</TableCell>
+                <TableCell 
+                  onClick={() => handleUserIdClick(row.userId)}
+                  sx={{ 
+                    cursor: 'pointer',
+                    '&:hover': {
+                      backgroundColor: '#f5f5f5',
+                      textDecoration: 'underline'
+                    }
+                  }}
+                >
+                  {row.userId}
+                </TableCell>
                 <TableCell>{row.question}</TableCell>
                 <TableCell>
                   <div className="media-badge">
@@ -206,6 +226,40 @@ export const ChatTable = forwardRef<
           )}
         </TableBody>
       </Table>
+      
+      {/* 사용자 ID 팝업 다이얼로그 */}
+      <Dialog 
+        open={userIdDialog.open} 
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>전체 사용자 ID</DialogTitle>
+        <DialogContent>
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body1" sx={{ 
+              fontFamily: 'monospace',
+              fontSize: '0.9rem',
+              wordBreak: 'break-all',
+              backgroundColor: '#f5f5f5',
+              padding: '12px',
+              borderRadius: '4px',
+              border: '1px solid #e0e0e0'
+            }}>
+              {userIdDialog.userId}
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button 
+            onClick={handleCloseDialog}
+            variant="contained"
+            color="primary"
+          >
+            닫기
+          </Button>
+        </DialogActions>
+      </Dialog>
     </TableContainer>
   );
 });
