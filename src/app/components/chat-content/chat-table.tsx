@@ -240,7 +240,7 @@ export const ChatTable = forwardRef<
         }}
       >
         <DialogTitle sx={{ 
-          padding: '16px 16px 8px 16px',
+          padding: '16px 16px 0px 16px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center'
