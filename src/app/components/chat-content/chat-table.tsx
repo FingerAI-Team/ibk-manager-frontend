@@ -28,8 +28,7 @@ export const ChatTable = forwardRef<
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState({ current: 0, total: 100, message: '' });
-  const [showCopyToast, setShowCopyToast] = useState(false);
-  const [toastPosition, setToastPosition] = useState({ x: 0, y: 0 });
+  const [showCopyMessage, setShowCopyMessage] = useState(false);
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
@@ -193,19 +192,13 @@ export const ChatTable = forwardRef<
     loadChatData(currentFilters, 0, newRowsPerPage);
   };
 
-  const handleUserIdClick = async (userId: string, event: React.MouseEvent) => {
-    // 클릭 위치 계산
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = rect.left + rect.width / 2; // 셀의 중앙
-    const y = rect.bottom + 5; // 셀 아래 5px
-    
+  const handleUserIdClick = async (userId: string) => {
     try {
       // 클립보드 API 사용 가능 여부 확인
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(userId);
-        setToastPosition({ x, y });
-        setShowCopyToast(true);
-        setTimeout(() => setShowCopyToast(false), 2000);
+        setShowCopyMessage(true);
+        setTimeout(() => setShowCopyMessage(false), 2000);
       } else {
         // 클립보드 API가 지원되지 않는 경우 대체 방법
         const textArea = document.createElement('textarea');
@@ -221,9 +214,8 @@ export const ChatTable = forwardRef<
         document.body.removeChild(textArea);
         
         if (successful) {
-          setToastPosition({ x, y });
-          setShowCopyToast(true);
-          setTimeout(() => setShowCopyToast(false), 2000);
+          setShowCopyMessage(true);
+          setTimeout(() => setShowCopyMessage(false), 2000);
         }
       }
     } catch (error) {
@@ -242,9 +234,8 @@ export const ChatTable = forwardRef<
       document.body.removeChild(textArea);
       
       if (successful) {
-        setToastPosition({ x, y });
-        setShowCopyToast(true);
-        setTimeout(() => setShowCopyToast(false), 2000);
+        setShowCopyMessage(true);
+        setTimeout(() => setShowCopyMessage(false), 2000);
       }
     }
   };
@@ -279,7 +270,7 @@ export const ChatTable = forwardRef<
               <TableRow key={`${row.id}-${index}`}>
                 <TableCell>{row.timestamp}</TableCell>
                 <TableCell 
-                  onClick={(e) => handleUserIdClick(row.userId, e)}
+                  onClick={() => handleUserIdClick(row.userId)}
                   sx={{ 
                     cursor: 'pointer',
                     '&:hover': {
@@ -312,6 +303,25 @@ export const ChatTable = forwardRef<
           )}
         </TableBody>
       </Table>
+      
+      {/* 복사 완료 안내문구 */}
+      {showCopyMessage && (
+        <Box
+          sx={{
+            textAlign: 'center',
+            padding: '12px',
+            backgroundColor: '#e8f5e8',
+            color: '#2e7d32',
+            fontSize: '14px',
+            fontWeight: '500',
+            border: '1px solid #c8e6c9',
+            borderRadius: '4px',
+            margin: '8px 0'
+          }}
+        >
+          사용자 ID가 복사되었습니다
+        </Box>
+      )}
       
       {/* 다운로드 진행률 다이얼로그 */}
       <Dialog 
@@ -347,30 +357,6 @@ export const ChatTable = forwardRef<
           </Box>
         </DialogContent>
       </Dialog>
-      
-      {/* 복사 완료 토스트 */}
-      {showCopyToast && (
-        <Box
-          sx={{
-            position: 'fixed',
-            left: `${toastPosition.x - 100}px`, // 토스트 너비의 절반만큼 왼쪽으로 이동
-            top: `${toastPosition.y}px`,
-            backgroundColor: '#4caf50',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '4px',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-            zIndex: 9999,
-            fontSize: '12px',
-            fontWeight: '500',
-            whiteSpace: 'nowrap',
-            transform: 'translateX(-50%)', // 중앙 정렬
-            pointerEvents: 'none' // 클릭 이벤트 방지
-          }}
-        >
-          복사됨
-        </Box>
-      )}
     </TableContainer>
   );
 });
