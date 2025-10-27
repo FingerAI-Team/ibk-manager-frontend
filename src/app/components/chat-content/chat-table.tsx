@@ -28,6 +28,7 @@ export const ChatTable = forwardRef<
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState({ current: 0, total: 100, message: '' });
+  const [showCopyToast, setShowCopyToast] = useState(false);
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
@@ -193,18 +194,49 @@ export const ChatTable = forwardRef<
 
   const handleUserIdClick = async (userId: string) => {
     try {
-      await navigator.clipboard.writeText(userId);
-      alert(`사용자 ID가 복사되었습니다: ${userId}`);
+      // 클립보드 API 사용 가능 여부 확인
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(userId);
+        setShowCopyToast(true);
+        setTimeout(() => setShowCopyToast(false), 2000);
+      } else {
+        // 클립보드 API가 지원되지 않는 경우 대체 방법
+        const textArea = document.createElement('textarea');
+        textArea.value = userId;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        if (successful) {
+          setShowCopyToast(true);
+          setTimeout(() => setShowCopyToast(false), 2000);
+        }
+      }
     } catch (error) {
       console.error('클립보드 복사 실패:', error);
-      // 클립보드 API가 지원되지 않는 경우 대체 방법
+      // 최종 대체 방법
       const textArea = document.createElement('textarea');
       textArea.value = userId;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
       document.body.appendChild(textArea);
+      textArea.focus();
       textArea.select();
-      document.execCommand('copy');
+      
+      const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
-      alert(`사용자 ID가 복사되었습니다: ${userId}`);
+      
+      if (successful) {
+        setShowCopyToast(true);
+        setTimeout(() => setShowCopyToast(false), 2000);
+      }
     }
   };
 
@@ -306,6 +338,27 @@ export const ChatTable = forwardRef<
           </Box>
         </DialogContent>
       </Dialog>
+      
+      {/* 복사 완료 토스트 */}
+      {showCopyToast && (
+        <Box
+          sx={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: '#4caf50',
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '4px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+            zIndex: 9999,
+            fontSize: '14px',
+            fontWeight: '500'
+          }}
+        >
+          사용자 ID가 복사되었습니다
+        </Box>
+      )}
     </TableContainer>
   );
 });
