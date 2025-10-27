@@ -309,7 +309,7 @@ export const ChatTable = forwardRef<
         <Box
           sx={{
             position: 'absolute',
-            bottom: '20px', // 페이지네이션에 더 가깝게
+            bottom: '5px', // 페이지네이션에 더 가깝게
             left: '50%',
             transform: 'translateX(-50%)',
             zIndex: 1000,
