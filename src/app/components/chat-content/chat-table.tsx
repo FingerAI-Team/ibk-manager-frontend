@@ -1,4 +1,4 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography, Box, LinearProgress } from "@mui/material"
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, TablePagination, CircularProgress, Dialog, DialogTitle, DialogContent, Typography, Box, LinearProgress } from "@mui/material"
 import { useState, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react'
 import { fetchChatList, fetchAllChatData, fetchAllChatDataForDownload, downloadChatDataStream } from '@/app/api/chat'
 import { SearchFilters } from './search-filters'
@@ -27,7 +27,6 @@ export const ChatTable = forwardRef<
   const [chatData, setChatData] = useState<ChatData[]>([]);
   const [currentFilters, setCurrentFilters] = useState<SearchFilters | null>(null);
   const [isExporting, setIsExporting] = useState(false);
-  const [userIdDialog, setUserIdDialog] = useState<{ open: boolean; userId: string }>({ open: false, userId: '' });
   const [downloadProgress, setDownloadProgress] = useState({ current: 0, total: 100, message: '' });
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
@@ -192,12 +191,21 @@ export const ChatTable = forwardRef<
     loadChatData(currentFilters, 0, newRowsPerPage);
   };
 
-  const handleUserIdClick = (userId: string) => {
-    setUserIdDialog({ open: true, userId });
-  };
-
-  const handleCloseDialog = () => {
-    setUserIdDialog({ open: false, userId: '' });
+  const handleUserIdClick = async (userId: string) => {
+    try {
+      await navigator.clipboard.writeText(userId);
+      alert(`사용자 ID가 복사되었습니다: ${userId}`);
+    } catch (error) {
+      console.error('클립보드 복사 실패:', error);
+      // 클립보드 API가 지원되지 않는 경우 대체 방법
+      const textArea = document.createElement('textarea');
+      textArea.value = userId;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert(`사용자 ID가 복사되었습니다: ${userId}`);
+    }
   };
 
   return (
@@ -263,64 +271,6 @@ export const ChatTable = forwardRef<
           )}
         </TableBody>
       </Table>
-      
-      {/* 사용자 ID 팝업 다이얼로그 */}
-      <Dialog 
-        open={userIdDialog.open} 
-        onClose={handleCloseDialog}
-        maxWidth="sm"
-        fullWidth
-        sx={{
-          '& .MuiDialog-paper': {
-            padding: '8px'
-          }
-        }}
-      >
-        <DialogTitle sx={{ 
-          padding: '16px 16px 0px 16px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center'
-        }}>
-          전체 사용자 ID
-          <Button 
-            onClick={handleCloseDialog}
-            sx={{ 
-              minWidth: 'auto',
-              padding: '4px',
-              fontSize: '18px',
-              fontWeight: 'bold',
-              color: '#666',
-              '&:hover': {
-                backgroundColor: '#f5f5f5',
-                color: '#333'
-              }
-            }}
-            >
-              X
-            </Button>
-        </DialogTitle>
-        <DialogContent sx={{ 
-          padding: '0px 16px 16px 16px !important',
-          '&.MuiDialogContent-root': { 
-            padding: '0px 16px 16px 16px !important' 
-          }
-        }}>
-          <Typography variant="body1" sx={{ 
-            fontFamily: 'monospace',
-            fontSize: '0.9rem',
-            wordBreak: 'break-all',
-            backgroundColor: '#f5f5f5',
-            padding: '12px',
-            borderRadius: '4px',
-            border: '1px solid #e0e0e0',
-            margin: '0px !important',
-            marginTop: '0px !important'
-          }}>
-            {userIdDialog.userId}
-          </Typography>
-        </DialogContent>
-      </Dialog>
       
       {/* 다운로드 진행률 다이얼로그 */}
       <Dialog 
