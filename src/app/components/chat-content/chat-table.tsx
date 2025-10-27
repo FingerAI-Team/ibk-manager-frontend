@@ -304,18 +304,18 @@ export const ChatTable = forwardRef<
         </TableBody>
       </Table>
       
-      {/* 복사 완료 안내문구 - 고정된 높이 공간 */}
-      <Box
-        sx={{
-          height: showCopyMessage ? '48px' : '0px',
-          overflow: 'hidden',
-          transition: 'height 0.2s ease-in-out',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        {showCopyMessage && (
+      {/* 복사 완료 안내문구 - 절대 위치 */}
+      {showCopyMessage && (
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: '60px', // 페이지네이션 위쪽에 위치
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 1000,
+            pointerEvents: 'none'
+          }}
+        >
           <Box
             sx={{
               padding: '8px 16px',
@@ -325,13 +325,14 @@ export const ChatTable = forwardRef<
               fontWeight: '500',
               border: '1px solid #c8e6c9',
               borderRadius: '4px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
               display: 'inline-block'
             }}
           >
             사용자 ID가 복사되었습니다
           </Box>
-        )}
-      </Box>
+        </Box>
+      )}
       
       {/* 다운로드 진행률 다이얼로그 */}
       <Dialog 
