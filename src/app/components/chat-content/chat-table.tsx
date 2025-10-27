@@ -309,17 +309,23 @@ export const ChatTable = forwardRef<
         <Box
           sx={{
             textAlign: 'center',
-            padding: '12px',
-            backgroundColor: '#e8f5e8',
-            color: '#2e7d32',
-            fontSize: '14px',
-            fontWeight: '500',
-            border: '1px solid #c8e6c9',
-            borderRadius: '4px',
-            margin: '8px 0'
+            padding: '8px 0'
           }}
         >
-          사용자 ID가 복사되었습니다
+          <Box
+            sx={{
+              display: 'inline-block',
+              padding: '8px 16px',
+              backgroundColor: '#e8f5e8',
+              color: '#2e7d32',
+              fontSize: '14px',
+              fontWeight: '500',
+              border: '1px solid #c8e6c9',
+              borderRadius: '4px'
+            }}
+          >
+            사용자 ID가 복사되었습니다
+          </Box>
         </Box>
       )}
       
