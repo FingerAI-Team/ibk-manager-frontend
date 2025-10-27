@@ -241,7 +241,7 @@ export const ChatTable = forwardRef<
   };
 
   return (
-    <TableContainer className="chat-table-container">
+    <TableContainer className="chat-table-container" sx={{ position: 'relative' }}>
       <Table>
         <TableHead>
           <TableRow>
@@ -308,20 +308,24 @@ export const ChatTable = forwardRef<
       {showCopyMessage && (
         <Box
           sx={{
-            textAlign: 'center',
-            padding: '8px 0'
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 1000,
+            pointerEvents: 'none'
           }}
         >
           <Box
             sx={{
-              display: 'inline-block',
               padding: '8px 16px',
               backgroundColor: '#e8f5e8',
               color: '#2e7d32',
               fontSize: '14px',
               fontWeight: '500',
               border: '1px solid #c8e6c9',
-              borderRadius: '4px'
+              borderRadius: '4px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
             }}
           >
             사용자 ID가 복사되었습니다
