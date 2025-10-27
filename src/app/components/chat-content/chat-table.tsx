@@ -29,6 +29,7 @@ export const ChatTable = forwardRef<
   const [isExporting, setIsExporting] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState({ current: 0, total: 100, message: '' });
   const [showCopyToast, setShowCopyToast] = useState(false);
+  const [toastPosition, setToastPosition] = useState({ x: 0, y: 0 });
 
   const loadChatData = useCallback(async (filters: SearchFilters, pageNum = 0, pageSize = rowsPerPage) => {
     try {
@@ -192,11 +193,17 @@ export const ChatTable = forwardRef<
     loadChatData(currentFilters, 0, newRowsPerPage);
   };
 
-  const handleUserIdClick = async (userId: string) => {
+  const handleUserIdClick = async (userId: string, event: React.MouseEvent) => {
+    // 클릭 위치 계산
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = rect.left + rect.width / 2; // 셀의 중앙
+    const y = rect.bottom + 5; // 셀 아래 5px
+    
     try {
       // 클립보드 API 사용 가능 여부 확인
       if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(userId);
+        setToastPosition({ x, y });
         setShowCopyToast(true);
         setTimeout(() => setShowCopyToast(false), 2000);
       } else {
@@ -214,6 +221,7 @@ export const ChatTable = forwardRef<
         document.body.removeChild(textArea);
         
         if (successful) {
+          setToastPosition({ x, y });
           setShowCopyToast(true);
           setTimeout(() => setShowCopyToast(false), 2000);
         }
@@ -234,6 +242,7 @@ export const ChatTable = forwardRef<
       document.body.removeChild(textArea);
       
       if (successful) {
+        setToastPosition({ x, y });
         setShowCopyToast(true);
         setTimeout(() => setShowCopyToast(false), 2000);
       }
@@ -270,7 +279,7 @@ export const ChatTable = forwardRef<
               <TableRow key={`${row.id}-${index}`}>
                 <TableCell>{row.timestamp}</TableCell>
                 <TableCell 
-                  onClick={() => handleUserIdClick(row.userId)}
+                  onClick={(e) => handleUserIdClick(row.userId, e)}
                   sx={{ 
                     cursor: 'pointer',
                     '&:hover': {
@@ -344,19 +353,22 @@ export const ChatTable = forwardRef<
         <Box
           sx={{
             position: 'fixed',
-            top: '20px',
-            right: '20px',
+            left: `${toastPosition.x - 100}px`, // 토스트 너비의 절반만큼 왼쪽으로 이동
+            top: `${toastPosition.y}px`,
             backgroundColor: '#4caf50',
             color: 'white',
-            padding: '12px 20px',
+            padding: '8px 16px',
             borderRadius: '4px',
             boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
             zIndex: 9999,
-            fontSize: '14px',
-            fontWeight: '500'
+            fontSize: '12px',
+            fontWeight: '500',
+            whiteSpace: 'nowrap',
+            transform: 'translateX(-50%)', // 중앙 정렬
+            pointerEvents: 'none' // 클릭 이벤트 방지
           }}
         >
-          사용자 ID가 복사되었습니다
+          복사됨
         </Box>
       )}
     </TableContainer>
