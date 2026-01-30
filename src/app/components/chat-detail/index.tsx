@@ -32,16 +32,16 @@ export const ChatDetailTab: React.FC = () => {
       
       console.log('🔄 API 호출: 대화 내역 로드 (페이지:', currentPage + 1, ')');
       
-      // 전체 대화 내역 로드 (임시로 넓은 기간 설정)
+      // 전체 대화 내역 로드 (9월 17일부터 오늘까지)
       const today = new Date();
-      const startDate = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]; // 1년 전
+      const startDate = '2025-09-17'; // 9월 17일부터
       const endDate = today.toISOString().split('T')[0]; // 오늘
       
       console.log('📅 사용할 기간:', startDate, '~', endDate);
       console.log('📄 페이지:', currentPage, ', 페이지 크기:', pageSize);
       
       const response = await fetchChatList({
-        startDate, // 1년 전부터
+        startDate, // 9월 17일부터
         endDate,   // 오늘까지
         isStock: 'all',
         media: 'all',
@@ -102,7 +102,7 @@ export const ChatDetailTab: React.FC = () => {
     // 캐시된 데이터가 없으면 API 호출
     console.log('🔄 새 데이터 로드 (페이지:', page + 1, ')');
     const today = new Date();
-    const startDate = new Date(today.getTime() - 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+    const startDate = '2025-09-17'; // 9월 17일부터
     const endDate = today.toISOString().split('T')[0];
     
     try {
